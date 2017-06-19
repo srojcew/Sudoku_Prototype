@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
@@ -14,11 +15,13 @@ import android.view.View;
 import android.widget.Toast;
 
 public class BoardView extends View {
-    private int cellSize;
-    private Paint linesPaint;
+    private int cellSize, textSize;
+    private float textCenteringOffsetX, textCenteringOffsetY;
+    private Paint linesPaint, textPaint;
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
     private int selectedX, selectedY;
+    private Integer[][] cellContents;
 
 
     public BoardView(Context context) {
@@ -39,25 +42,45 @@ public class BoardView extends View {
         linesPaint = new Paint();
         linesPaint.setColor(Color.BLACK);
         linesPaint.setStrokeWidth(2);
-        selectedX = 0;
-        selectedY = 0;
+        textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+        selectCell(0, 0);
+        cellContents = new Integer[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                cellContents[i][j] = 5;
+            }
+        }
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         cellSize = (int) Math.floor(Math.min(this.getWidth(), this.getHeight()) / 9.0);
+        textSize = cellSize;
+        textPaint.setTextSize(textSize);
+        Rect textBounds = new Rect();
+        textPaint.getTextBounds("0", 0, 1, textBounds);
+        textCenteringOffsetX = (cellSize - textBounds.width()) / 2;
+        textCenteringOffsetY = (cellSize - textBounds.height()) / 2;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         float sideLength = cellSize * 9;
 
-        for (int i = 0; i < 10; i++) {
-            float position = i * cellSize;
+        for (int row = 0; row < 9; row++) {
+            float position = row * cellSize;
             canvas.drawLine(0, position, sideLength, position, linesPaint);
             canvas.drawLine(position, 0, position, sideLength, linesPaint);
+            for (int col = 0; col < 9; col++) {
+                float textX = col * cellSize + textCenteringOffsetX;
+                float textY = position + cellSize - textCenteringOffsetY;
+                canvas.drawText(cellContents[row][col].toString(), textX, textY, textPaint);
+            }
         }
+        canvas.drawLine(0, 9 * cellSize, sideLength, 9 * cellSize, linesPaint);
+        canvas.drawLine(9 * cellSize, 0, 9 * cellSize, sideLength, linesPaint);
     }
 
     @Override
@@ -72,8 +95,8 @@ public class BoardView extends View {
     }
 
     private void selectCell(float actualX, float actualY) {
-        selectedX = getCellX(actualX) + 1;
-        selectedY = getCellY(actualY) + 1;
+        selectedX = getCellX(actualX);
+        selectedY = getCellY(actualY);
     }
 
     private int getCellX(float actualX) {
@@ -85,5 +108,7 @@ public class BoardView extends View {
 
     public void setNum(int number) {
         Log.d(TAG, "setting cell (" + selectedX + ", " + selectedY + ") to number: " + number);
+        cellContents[selectedY][selectedX] = number;
+        invalidate();
     }
 }
