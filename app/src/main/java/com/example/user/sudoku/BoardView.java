@@ -17,11 +17,13 @@ import android.widget.Toast;
 public class BoardView extends View {
     private int cellSize, textSize;
     private float textCenteringOffsetX, textCenteringOffsetY;
-    private Paint linesPaint, textPaint;
+    private Paint linesPaintThin, linesPaintThick, textPaint;
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
     private int selectedX, selectedY;
     private Integer[][] cellContents;
+    private static final int THIN_WIDTH = 5, THICK_WIDTH = 20;
+    private static final double TEXT_SCALER = 0.8;
 
 
     public BoardView(Context context) {
@@ -39,16 +41,19 @@ public class BoardView extends View {
 
     private void init(Context context) {
         mainActivity = (MainActivity) context;
-        linesPaint = new Paint();
-        linesPaint.setColor(Color.BLACK);
-        linesPaint.setStrokeWidth(2);
+        linesPaintThin = new Paint();
+        linesPaintThin.setColor(Color.BLACK);
+        linesPaintThin.setStrokeWidth(THIN_WIDTH);
+        linesPaintThick = new Paint();
+        linesPaintThick.setColor(Color.BLACK);
+        linesPaintThick.setStrokeWidth(THICK_WIDTH);
         textPaint = new Paint();
         textPaint.setColor(Color.BLACK);
         selectCell(0, 0);
         cellContents = new Integer[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cellContents[i][j] = 5;
+                cellContents[i][j] = 0;
             }
         }
     }
@@ -57,11 +62,12 @@ public class BoardView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         cellSize = (int) Math.floor(Math.min(this.getWidth(), this.getHeight()) / 9.0);
-        textSize = cellSize;
+        textSize = (int) Math.floor(cellSize * TEXT_SCALER);
         textPaint.setTextSize(textSize);
         Rect textBounds = new Rect();
         textPaint.getTextBounds("0", 0, 1, textBounds);
-        textCenteringOffsetX = (cellSize - textBounds.width()) / 2;
+        float width = textBounds.width() + textBounds.left;
+        textCenteringOffsetX = (cellSize - width) / 2;
         textCenteringOffsetY = (cellSize - textBounds.height()) / 2;
     }
 
@@ -71,6 +77,7 @@ public class BoardView extends View {
 
         for (int row = 0; row < 9; row++) {
             float position = row * cellSize;
+            Paint linesPaint = row == 3 || row == 6 ? linesPaintThick : linesPaintThin;
             canvas.drawLine(0, position, sideLength, position, linesPaint);
             canvas.drawLine(position, 0, position, sideLength, linesPaint);
             for (int col = 0; col < 9; col++) {
@@ -79,8 +86,8 @@ public class BoardView extends View {
                 canvas.drawText(cellContents[row][col].toString(), textX, textY, textPaint);
             }
         }
-        canvas.drawLine(0, 9 * cellSize, sideLength, 9 * cellSize, linesPaint);
-        canvas.drawLine(9 * cellSize, 0, 9 * cellSize, sideLength, linesPaint);
+        canvas.drawLine(0, 9 * cellSize, sideLength, 9 * cellSize, linesPaintThin);
+        canvas.drawLine(9 * cellSize, 0, 9 * cellSize, sideLength, linesPaintThin);
     }
 
     @Override
@@ -88,15 +95,24 @@ public class BoardView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
-        selectCell(event.getX(), event.getY());
-        Log.d(TAG, "user selected");
-        mainActivity.showNumberChooser();
+        if (selectCell(event.getX(), event.getY())) {
+            Log.d(TAG, "user selected");
+            mainActivity.showNumberChooser();
+        }
         return true;
     }
 
-    private void selectCell(float actualX, float actualY) {
-        selectedX = getCellX(actualX);
-        selectedY = getCellY(actualY);
+    private boolean selectCell(float actualX, float actualY) {
+        int x = getCellX(actualX);
+        int y = getCellY(actualY);
+        if (x >= 0 && x <= 8 && y >= 0 && y <= 8) {
+            selectedX = x;
+            selectedY = y;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     private int getCellX(float actualX) {
