@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     private static final String mistakeMessage = "You have made a mistake in the red cells.";
     private static final String solvedMessage = "The puzzle is solved.";
 
+    private BoardView boardView;
+
     /* User preferences */
     private boolean doCheckCands;
     private boolean doUpdateCands;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         doCheckCands = true;
         doUpdateCands = true;
         doNotifyMistakes = true;
+        boardView = (BoardView) findViewById(R.id.BoardView);
     }
 
     protected void showNumberChooser() {
@@ -60,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             doAction(ButtonAction.HINT);
         }
         else {
-            BoardView boardView = (BoardView) findViewById(R.id.BoardView);
             boardView.setCell(number);
         }
     }
@@ -68,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     public void newPuzzle(View view) {
         //TODO: confirm user decision
         String[][] puzzAndSolution = Backend.makePuzzle(TypeConstants.EASY);
-        BoardView boardView = (BoardView) findViewById(R.id.BoardView);
         boardView.setAllCells(puzzAndSolution[0]);
     }
 
@@ -134,5 +135,56 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
 
     private enum ButtonAction {
         NEW, SOLVE, HINT, UNDO, REDO, APPLY_HINT, TEST_SOLVABLE;
+    }
+
+    private String[] getCheckedInput(BoardView bView) {
+        String[] boardArray = new String[81];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                boardArray[i * 9 + j] = bView.getTextAt(i, j);
+            }
+        }
+        return boardArray;
+    }
+
+    private String[] getCandidatesText() {
+        String[] candidatesText = new String[81];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                candidatesText[9 * i + j] = boardView.getCandidatesTextAt(i, j);
+            }
+        }
+        return candidatesText;
+    }
+
+    private void doUndo() {
+        if (!undoStack.isEmpty()) {
+            GameStateImage state = undoStack.pop();
+            redoStack.push(new GameStateImage(this, state.getDescription(), currentPuzzle));
+            currentPuzzle = state.getCurrentPuzzle();
+            currentHint = null;
+            boardView.clear();
+            board.removeHighlighting();
+            candidatesBoard.clear();
+            candidatesBoard.removeHighlighting();
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    if (state.boardIsFixedAt(i, j)) {
+                        board.setFixedTextAt(i, j, state.getBoardTextAt(i, j));
+                    }
+                    else {
+                        board.setTextAt(i, j, state.getBoardTextAt(i, j));
+                    }
+                    if (state.candidatesIsFixedAt(i, j)) {
+                        candidatesBoard.setFixedTextAt(i, j, state.getCandidatesTextAt(i, j));
+                    }
+                    else {
+                        candidatesBoard.setCandidatesTextAt(i, j, state.getCandidatesTextAt(i, j));
+                    }
+                }
+            }
+        }
+        updateButtons();
+        formatCandidatesText();
     }
 }
