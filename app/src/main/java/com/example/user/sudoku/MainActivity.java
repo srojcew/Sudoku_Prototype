@@ -9,39 +9,21 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
+import java.util.Stack;
+import java.util.Vector;
 
 import com.example.user.sudoku.backend.Backend;
 import com.example.user.sudoku.backend.TypeConstants;
+import com.example.user.sudoku.backend.HintUI;
 
 public class MainActivity extends AppCompatActivity implements NumChooserDialogFrag.NumChooserDialogFragListener {
-    
-    private JButton showButton;
-    private JButton hintButton;
-    private JButton undoButton;
-    private JButton redoButton;
-    private JButton acceptButton;
-    private JButton defCancelButton;
-    private JButton applyButton;
-    private JPanel buttonsPanel;
-    private JPanel undoRedoPanel;
-    private BoardPanel board;
-    private CandidatesPanel candidatesBoard;
-    private JLabel board1Label;
-    private JPanel board2LabelPanel;
-    private JPanel messagePanel;
-    private JTextArea messageArea;
+
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
     private HintUI currentHint;
-    private JFrame defFrame;
-    private JPanel defPanel;
-    private JTextArea defMessageArea;
-    private BoardPanel defBoard;
-    private JButton solvableButton;
     private String[][] currentPuzzle;
     private Vector<Integer> mistakeCells;
     private static final String mistakeMessage = "You have made a mistake in the red cells.";
-    private static final String mistakeCandsMessage = "Your candidate list in the red cell does not contain the correct number.";
     private static final String solvedMessage = "The puzzle is solved.";
 
     /* User preferences */
@@ -54,6 +36,18 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init();
+    }
+
+    private void init() {
+        undoStack = new Stack<GameStateImage>();
+        redoStack = new Stack<GameStateImage>();
+        currentHint = null;
+        currentPuzzle = null;
+        mistakeCells = new Vector<Integer>();
+        doCheckCands = true;
+        doUpdateCands = true;
+        doNotifyMistakes = true;
     }
 
     protected void showNumberChooser() {
@@ -62,8 +56,13 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     }
 
     public void numSelected(String number) {
-        BoardView boardView = (BoardView) findViewById(R.id.BoardView);
-        boardView.setCell(number);
+        if (number.equals("0")) {
+            doAction(ButtonAction.HINT);
+        }
+        else {
+            BoardView boardView = (BoardView) findViewById(R.id.BoardView);
+            boardView.setCell(number);
+        }
     }
 
     public void newPuzzle(View view) {
@@ -71,5 +70,69 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         String[][] puzzAndSolution = Backend.makePuzzle(TypeConstants.EASY);
         BoardView boardView = (BoardView) findViewById(R.id.BoardView);
         boardView.setAllCells(puzzAndSolution[0]);
+    }
+
+    public void solve(View view) {
+        currentHint = null;
+        doAction(ButtonAction.SOLVE);
+    }
+    public void undo(View view) {
+        doAction(ButtonAction.UNDO);
+    }
+    public void redo(View view) {
+        doAction(ButtonAction.REDO);
+    }
+    public void applyHint(View view) {
+        doAction(ButtonAction.APPLY_HINT);
+    }
+    public void testSolvable(View view) {
+        doAction(ButtonAction.TEST_SOLVABLE);
+    }
+
+    private void doAction(ButtonAction action) {
+        if (action != ButtonAction.APPLY_HINT) {
+            currentHint = null;
+        }
+        if (action == ButtonAction.UNDO) {
+            doUndo();
+            updateAfterBoardChange();
+            doAutoUpdateCandidates();
+            return;
+        }
+        if (action == ButtonAction.REDO) {
+            doRedo();
+            updateAfterBoardChange();
+            doAutoUpdateCandidates();
+            return;
+        }
+        if (action != ButtonAction.HINT) {
+            redoStack.clear();
+        }
+
+        if (action == ButtonAction.SOLVE) {
+            doSolve();
+            updateAfterBoardChange();
+        }
+        else if (action == ButtonAction.NEW) {
+            doGenerate();
+            doAutoUpdateCandidates();
+        }
+        else if (action == ButtonAction.HINT) {
+            doHint();
+            //doAutoUpdateCandidates();
+        }
+        else if (action == ButtonAction.APPLY_HINT) {
+            doApplyHint();
+            doAutoUpdateCandidates();
+            updateAfterBoardChange();
+        }
+        else if (action == ButtonAction.TEST_SOLVABLE) {
+            doTestSolvable();
+        }
+        updateButtons();
+    }
+
+    private enum ButtonAction {
+        NEW, SOLVE, HINT, UNDO, REDO, APPLY_HINT, TEST_SOLVABLE;
     }
 }
