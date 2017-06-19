@@ -15,7 +15,7 @@ public class Backend {
      *            by integer TypeConstants.BLANK
      * @return
      */
-    public String[] findSolution(String[] stringBoard) {
+    public static String[] findSolution(String[] stringBoard) {
         int[] boardArray = boardStringToInt(stringBoard);
         SudokuGraph board = new SudokuGraph(boardArray);
         boolean solvable = SolverAndGenerator.findSolution(board);
@@ -26,7 +26,7 @@ public class Backend {
         }
     }
 
-    public String[][] makePuzzle(int difficulty) {
+    public static String[][] makePuzzle(int difficulty) {
         Vector<Vector<Integer>> puzzle = SolverAndGenerator.makePuzzle(difficulty);
         if (puzzle == null) {
             return null;
@@ -37,19 +37,19 @@ public class Backend {
         return puzAndSol;
     }
 
-    public boolean testSingleSolution(String[] stringBoard) {
+    public static boolean testSingleSolution(String[] stringBoard) {
         int[] boardArray = boardStringToInt(stringBoard);
         SudokuGraph board = new SudokuGraph(boardArray);
         return SolverAndGenerator.testSingleSolution(board);
     }
 
-    public String[] findCandidates(String[] stringBoard) {
+    public static String[] findCandidates(String[] stringBoard) {
         int[] boardArray = boardStringToInt(stringBoard);
         SudokuGraph board = new SudokuGraph(boardArray);
         return candidatesIntToString(board.findAllCandidates());
     }
 
-    public HintUI hint(String[] candidates, String[] committedNumbers) {
+    public static HintUI hint(String[] candidates, String[] committedNumbers) {
         Vector<Vector<Integer>> intCands = candidatesStringToInt(candidates);
         int[] committedInts = boardStringToInt(committedNumbers);
         Hint hint = HintCreator.createUserHint(intCands, committedInts);
@@ -59,7 +59,7 @@ public class Backend {
         return hint;
     }
 
-    public HintUI hintAt(int row, int col, String[] candidates, String[] committedNumbers) {
+    public static HintUI hintAt(int row, int col, String[] candidates, String[] committedNumbers) {
         Vector<Vector<Integer>> intCands = candidatesStringToInt(candidates);
         int[] committedInts = boardStringToInt(committedNumbers);
         Hint hint = HintCreator.createHintAt(row, col, intCands, committedInts);

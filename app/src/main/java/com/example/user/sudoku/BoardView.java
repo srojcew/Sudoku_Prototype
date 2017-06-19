@@ -21,7 +21,7 @@ public class BoardView extends View {
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
     private int selectedX, selectedY;
-    private Integer[][] cellContents;
+    private String[][] cellContents;
     private static final int THIN_WIDTH = 5, THICK_WIDTH = 20;
     private static final double TEXT_SCALER = 0.8;
 
@@ -50,10 +50,10 @@ public class BoardView extends View {
         textPaint = new Paint();
         textPaint.setColor(Color.BLACK);
         selectCell(0, 0);
-        cellContents = new Integer[9][9];
+        cellContents = new String[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cellContents[i][j] = 0;
+                cellContents[i][j] = "";
             }
         }
     }
@@ -96,7 +96,6 @@ public class BoardView extends View {
             return super.onTouchEvent(event);
         }
         if (selectCell(event.getX(), event.getY())) {
-            Log.d(TAG, "user selected");
             mainActivity.showNumberChooser();
         }
         return true;
@@ -115,6 +114,15 @@ public class BoardView extends View {
         }
     }
 
+    public void setAllCells(String[] cells) {
+        for (int i = 0; i < 81; i++) {
+            int row = i / 9;
+            int col = i % 9;
+            cellContents[row][col] = cells[i];
+        }
+        invalidate();
+    }
+
     private int getCellX(float actualX) {
         return (int) Math.floor(actualX / cellSize);
     }
@@ -122,8 +130,7 @@ public class BoardView extends View {
         return (int) Math.floor(actualY / cellSize);
     }
 
-    public void setNum(int number) {
-        Log.d(TAG, "setting cell (" + selectedX + ", " + selectedY + ") to number: " + number);
+    public void setCell(String number) {
         cellContents[selectedY][selectedX] = number;
         invalidate();
     }

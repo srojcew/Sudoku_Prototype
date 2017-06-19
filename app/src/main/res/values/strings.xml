@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Sudoku</string>
-    <string name="solve">Solve</string>
     <string name="select_msg">User Selected</string>
     <string name="select_number">Choose</string>
     <string name="ok">ok</string>
     <string name="cancel">cancel</string>
+    <string name="new_puzzle">new</string>
+    <string name="solve">Solve</string>
 </resources>

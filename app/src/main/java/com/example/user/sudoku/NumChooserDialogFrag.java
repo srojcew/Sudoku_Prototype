@@ -19,7 +19,7 @@ public class NumChooserDialogFrag extends DialogFragment {
         builder.setItems(R.array.sudoku_numbers, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                chooserListener.numSelected(which + 1);
+                chooserListener.numSelected(Integer.toString(which + 1));
             }
         });
         return builder.create();
@@ -37,7 +37,7 @@ public class NumChooserDialogFrag extends DialogFragment {
     }
 
     public interface NumChooserDialogFragListener {
-        public void numSelected(int number);
+        public void numSelected(String number);
     }
 
 }
