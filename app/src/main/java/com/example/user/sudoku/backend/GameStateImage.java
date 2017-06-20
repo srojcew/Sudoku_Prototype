@@ -1,4 +1,4 @@
-package com.example.user.sudoku;
+package com.example.user.sudoku.backend;
 
 
 /*
@@ -7,6 +7,8 @@ package com.example.user.sudoku;
  * Maintains the state of Game Mode. Used by GamePanel for Undo and Redo
  *
  */
+import com.example.user.sudoku.BoardView;
+
 
 public class GameStateImage {
     private String[][] boardCells;
@@ -16,7 +18,7 @@ public class GameStateImage {
     private String description;
     private String[][] currentPuzzle;
 
-    public GameStateImage(MainActivity game, String des, String[][] currentPuz) {
+    public GameStateImage(BoardView boardView, String des, String[][] currentPuz) {
         description = des;
         boardCells = new String[9][9];
         candidatesCells = new String[9][9];
@@ -25,10 +27,10 @@ public class GameStateImage {
         currentPuzzle = copyPuzzle(currentPuz);
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                boardCells[i][j] = game.getTextAt(i, j);
-                candidatesCells[i][j] = game.getCandidatesTextAt(i, j);
-                boardCellsFixed[i][j] = game.textIsFixedAt(i, j);
-                candidatesCellsFixed[i][j] = game.candidatesTextIsFixedAt(i, j);
+                boardCells[i][j] = boardView.getTextAt(i, j);
+                candidatesCells[i][j] = boardView.getCandidatesTextAt(i, j);
+                boardCellsFixed[i][j] = boardView.textIsFixedAt(i, j);
+                candidatesCellsFixed[i][j] = boardView.candidatesTextIsFixedAt(i, j);
             }
         }
     }

@@ -56,7 +56,7 @@ public class BoardView extends View {
         cells = new Cell[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cells[i][j] = new Cell("", new ArrayList<String>(), false, Color.WHITE);
+                cells[i][j] = new Cell(i, j, "", "", false, Color.WHITE);
             }
         }
         selectCell(0, 0);
@@ -148,16 +148,28 @@ public class BoardView extends View {
     public void setCell(String number) {
         selectedCell.setValue(number);
     }
-    /*public int getSelectedX() {
-        return selectedX;
+    public int getSelectedX() {
+        return selectedCell.getColumn();
     }
     public int getSelectedY() {
-        return selectedY;
-    }*/
+        return selectedCell.getRow();
+    }
 
 
     public String getTextAt(int row, int col) {
         return cells[row][col].getValue();
+    }
+    public String getCandidatesTextAt(int row, int col) {
+        return cells[row][col].getCandidates();
+    }
+    public void setCandidatesTextAt(int row, int col, String candidates) {
+        cells[row][col].setCandidates(candidates);
+    }
+    public void setFixedCandidatesTextAt(int row, int col, String candidates) {
+        setCandidatesTextAt(row, col, candidates);
+    }
+    public boolean candidatesTextIsFixedAt(int row, int col) {
+        return false;
     }
     public void setTextAt(int row, int col, String num) {
         cells[row][col].setValue(num);
@@ -227,11 +239,14 @@ public class BoardView extends View {
 
     private class Cell {
         private boolean fixed;
-        private String value;
-        private ArrayList<String> candidates;
+        private String value, candidatesAsString;
+        private String candidates;
         private int backHighlightColor;
+        private final int row, column;
 
-        public Cell(String v, ArrayList<String> c, boolean f, int b) {
+        public Cell(int r, int col, String v, String c, boolean f, int b) {
+            row = r;
+            column = col;
             value = v;
             candidates = c;
             fixed = f;
@@ -244,12 +259,20 @@ public class BoardView extends View {
         public String getValue() {
             return value;
         }
-        public ArrayList<String> getCandidates() {
+        public String getCandidates() {
             return candidates;
         }
 
         public int getBackHighlightColor() {
             return backHighlightColor;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getColumn() {
+            return column;
         }
 
         public void setBackHighlightColor(int b) {
@@ -264,7 +287,7 @@ public class BoardView extends View {
             value = v;
             invalidate();
         }
-        public void setCandidates(ArrayList<String> c) {
+        public void setCandidates(String c) {
             candidates = c;
             invalidate();
         }

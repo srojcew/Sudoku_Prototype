@@ -22,6 +22,7 @@ import com.example.user.sudoku.backend.Backend;
 import com.example.user.sudoku.backend.TypeConstants;
 import com.example.user.sudoku.backend.HintUI;
 import com.example.user.sudoku.backend.HintResponse;
+import com.example.user.sudoku.backend.GameStateImage;
 
 public class MainActivity extends AppCompatActivity implements NumChooserDialogFrag.NumChooserDialogFragListener, DifficultyDialogFrag.DifficultyDialogListener {
 
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             });
         }
         else {
-            undoStack.push(new GameStateImage(this, "new puzzle", currentPuzzle));
+            undoStack.push(new GameStateImage(boardView, "new puzzle", currentPuzzle));
             currentPuzzle = puzzle;
             boardView.clear(); // remove leftover bold text formatting
             boardView.removeHighlighting();
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     private void doUndo() {
         if (!undoStack.isEmpty()) {
             GameStateImage state = undoStack.pop();
-            redoStack.push(new GameStateImage(this, state.getDescription(), currentPuzzle));
+            redoStack.push(new GameStateImage(boardView, state.getDescription(), currentPuzzle));
             currentPuzzle = state.getCurrentPuzzle();
             currentHint = null;
             boardView.clear();
@@ -247,13 +248,13 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             }
         }
         updateButtons();
-        formatCandidatesText();
+        //formatCandidatesText();
     }
 
     private void doRedo() {
         if (!redoStack.isEmpty()) {
             GameStateImage state = redoStack.pop();
-            undoStack.push(new GameStateImage(this, state.getDescription(), currentPuzzle));
+            undoStack.push(new GameStateImage(boardView, state.getDescription(), currentPuzzle));
             currentPuzzle = state.getCurrentPuzzle();
             currentHint = null;
             boardView.clear();
@@ -276,11 +277,11 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             }
         }
         updateButtons();
-        formatCandidatesText();
+        //formatCandidatesText();
     }
 
     private void doSolve() {
-        undoStack.push(new GameStateImage(this, "solve", currentPuzzle));
+        undoStack.push(new GameStateImage(boardView, "solve", currentPuzzle));
         String[] solvedBoard;
         String[] boardArray = getCheckedInput(boardView);
         solvedBoard = Backend.findSolution(boardArray);
@@ -317,6 +318,15 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 }
             }
         }
+    }
+    private String[] getCandidates() {
+        String[] candidates = new String[81];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                candidates[9 * i + j] = boardView.getCandidatesTextAt(i, j);
+            }
+        }
+        return candidates;
     }
 
     private void doHint() {
@@ -358,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     }
 
     private void doApplyHint() {
-        undoStack.push(new GameStateImage(this, "apply hint", currentPuzzle));
+        undoStack.push(new GameStateImage(boardView, "apply hint", currentPuzzle));
         String[] candidates = getCandidates();
         String[] committedNums = getCheckedInput(boardView);
         HintResponse hintResponse = Backend.applyHint(currentHint, candidates, committedNums);
@@ -370,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 if (!boardView.getCandidatesTextAt(i, j).equals(hintResponse.getCandidates()[9 * i + j])) {
                     boardView.setCandidatesTextAt(i, j, hintResponse.getCandidates()[9 * i + j]);
                 }
-                formatCandidatesText(i, j);
+                //formatCandidatesText(i, j);
             }
         }
     }
@@ -503,7 +513,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             }
 
             // format candidates text appropriately
-            formatCandidatesText(row, col);
+            //formatCandidatesText(row, col);
         }
     }
     /**
