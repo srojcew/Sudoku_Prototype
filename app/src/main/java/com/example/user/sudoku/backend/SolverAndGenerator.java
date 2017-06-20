@@ -76,7 +76,7 @@ public class SolverAndGenerator {
             }
         }
         int attempts = 1;
-        int maxAttempts = 500;
+        int maxAttempts = 20;
         while (!(success && satisfiesDifficulty) && attempts < maxAttempts) {
             board = null;
             puzzle = null;
@@ -264,12 +264,6 @@ public class SolverAndGenerator {
         }
     }
 
-    /**
-     *
-     * @param board assumed to be solvable
-     * @param prevNode the only node at which a valid configuration is not assumed
-     * @return
-     */
     public static boolean testSingleSolution(SudokuGraph board) {
         int[] boardArray = board.valuesArray();
         board = null;

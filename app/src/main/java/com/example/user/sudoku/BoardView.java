@@ -50,13 +50,13 @@ public class BoardView extends View {
         linesPaintThick.setColor(Color.BLACK);
         linesPaintThick.setStrokeWidth(THICK_WIDTH);
         editableTextPaint = new Paint();
-        editableTextPaint.setColor(Color.DKGRAY);
+        editableTextPaint.setColor(Color.BLUE);
         fixedTextPaint = new Paint();
         fixedTextPaint.setColor(Color.BLACK);
         cells = new Cell[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cells[i][j] = new Cell(i, j, "", "", false, Color.WHITE);
+                cells[i][j] = new Cell(i, j, "", "", true, Color.WHITE);
             }
         }
         selectCell(0, 0);
@@ -101,22 +101,19 @@ public class BoardView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
-        if (selectCell(event.getX(), event.getY())) {
-            mainActivity.showNumberChooser();
+        int row = getCellY(event.getY());
+        int col = getCellX(event.getX());
+        if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
+            if (!cells[row][col].isFixed()) {
+                selectCell(row, col);
+                mainActivity.showNumberChooser();
+            }
         }
         return true;
     }
 
-    private boolean selectCell(float actualX, float actualY) {
-        int x = getCellX(actualX);
-        int y = getCellY(actualY);
-        if (x >= 0 && x <= 8 && y >= 0 && y <= 8) {
-            selectedCell = cells[y][x];
-            return true;
-        }
-        else {
-            return false;
-        }
+    private void selectCell(int row, int col) {
+        selectedCell = cells[row][col];
     }
 
     /*public void setAllCells(String[] cells) {

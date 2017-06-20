@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         doUpdateCands = true;
         doNotifyMistakes = true;
         boardView = (BoardView) findViewById(R.id.BoardView);
+        updateButtons();
     }
 
     protected void showNumberChooser() {
@@ -69,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     public void numSelected(String number) {
         if (number.equals("0")) {
             notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());
+        }
+        else if (number.equals("10")) {
+            boardView.setCell("");
         }
         else {
             boardView.setCell(number);
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                     return;
                 }
             });
+            continueAlertBuilder.create().show();
         }
         else {
             undoStack.push(new GameStateImage(boardView, "new puzzle", currentPuzzle));
@@ -112,18 +117,6 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             case 1: difficulty = TypeConstants.MEDIUM;
                 break;
             case 2: difficulty = TypeConstants.HARD;
-                AlertDialog.Builder confirmHardBuilder = new AlertDialog.Builder(this);
-                confirmHardBuilder.setMessage(R.string.diff_confirm_msg);
-                confirmHardBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        generatePossiblyHard(TypeConstants.HARD);
-                    }
-                });
-                confirmHardBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        return;
-                    }
-                });
                 break;
             case 3:
                 difficulty = TypeConstants.HARDEST;
@@ -509,7 +502,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 }
             }
             if (solved) {
-                Toast.makeText(getApplicationContext(), solvedMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), solvedMessage, Toast.LENGTH_SHORT).show();
             }
 
             // format candidates text appropriately

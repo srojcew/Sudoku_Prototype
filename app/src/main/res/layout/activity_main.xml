@@ -10,31 +10,36 @@
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/NewButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/new_puzzle"
             android:onClick="newPuzzle"/>
         <Button
             android:id="@+id/SolveButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/solve"
             android:onClick="solve"/>
         <Button
             android:id="@+id/HintButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/hint"
             android:onClick="hint"/>
         <Button
             android:id="@+id/ApplyHintButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/apply_hint"
             android:onClick="applyHint"/>
         <Button
             android:id="@+id/TestSolvableButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/test_solvable"
             android:onClick="testSolvable"/>
@@ -52,13 +57,15 @@
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/UndoButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/undo"
             android:onClick="undo" />
         <Button
             android:id="@+id/RedoButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/redo"
             android:onClick="redo"/>
