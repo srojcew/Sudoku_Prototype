@@ -69,7 +69,7 @@ public class Backend {
         return hint;
     }
 
-    public HintResponse applyHint(HintUI hint, String[] candidates, String[] committedNums) {
+    public static HintResponse applyHint(HintUI hint, String[] candidates, String[] committedNums) {
         return HintCreator.applyHint((Hint)hint, candidatesStringToInt(candidates), boardStringToInt(committedNums));
     }
 

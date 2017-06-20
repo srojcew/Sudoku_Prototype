@@ -144,4 +144,10 @@ public class BoardView extends View {
         cellContents[selectedY][selectedX] = number;
         invalidate();
     }
+    public int getSelectedX() {
+        return selectedX;
+    }
+    public int getSelectedY() {
+        return selectedY;
+    }
 }

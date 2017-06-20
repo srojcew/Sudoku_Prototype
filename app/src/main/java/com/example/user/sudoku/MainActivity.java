@@ -11,14 +11,17 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
 
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.Vector;
+import android.graphics.Color;
 
 import com.example.user.sudoku.backend.Backend;
 import com.example.user.sudoku.backend.TypeConstants;
 import com.example.user.sudoku.backend.HintUI;
+import com.example.user.sudoku.backend.HintResponse;
 
 public class MainActivity extends AppCompatActivity implements NumChooserDialogFrag.NumChooserDialogFragListener, DifficultyDialogFrag.DifficultyDialogListener {
 
@@ -64,10 +67,11 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
 
     public void numSelected(String number) {
         if (number.equals("0")) {
-            doAction(ButtonAction.HINT);
+            notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());
         }
         else {
             boardView.setCell(number);
+            notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
         }
     }
 
@@ -351,5 +355,223 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     private boolean isSolved() {
         String[] currentBoard = boardView.getAllCells();
         return Arrays.equals(currentBoard, currentPuzzle[1]);
+    }
+
+    private void doApplyHint() {
+        undoStack.push(new GameStateImage(this, "apply hint", currentPuzzle));
+        String[] candidates = getCandidates();
+        String[] committedNums = getCheckedInput(boardView);
+        HintResponse hintResponse = Backend.applyHint(currentHint, candidates, committedNums);
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (!boardView.getTextAt(i, j).equals(hintResponse.getCommittedNums()[9 * i + j])) {
+                    boardView.setTextAt(i, j, hintResponse.getCommittedNums()[9 * i + j]);
+                }
+                if (!boardView.getCandidatesTextAt(i, j).equals(hintResponse.getCandidates()[9 * i + j])) {
+                    boardView.setCandidatesTextAt(i, j, hintResponse.getCandidates()[9 * i + j]);
+                }
+                formatCandidatesText(i, j);
+            }
+        }
+    }
+
+    private void doTestSolvable() {
+        boardView.removeHighlighting();
+        currentHint = null;
+        if (!checkBoardForMistakes()) {
+            Toast.makeText(getApplicationContext(), "Your entries are correct", Toast.LENGTH_SHORT);
+            //board.removeHighlighting(Color.RED); // red highlighting should already be removed
+        }
+    }
+    /**
+     * marks incorrect cells in red
+     * @return true if a mistake was found
+     */
+    private boolean checkBoardForMistakes() {
+        if (Backend.findSolution(getCheckedInput(boardView)) == null) {
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    checkBoardForMistakesAt(i, j);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    private boolean checkBoardForMistakesAt(int row, int col) {
+        String[] puzzle = getCheckedInput(boardView);
+        String[] solvedPuzzle = currentPuzzle[1];
+        if (!(puzzle[9 * row + col].equals("") || puzzle[9 * row + col].equals(solvedPuzzle[9 * row + col]))) {
+            Toast.makeText(getApplicationContext(), mistakeMessage, Toast.LENGTH_LONG);
+            boardView.highlightAt(row, col, Color.RED);
+            mistakeCells.add(9 * row + col); // TODO: remove this line?
+            return true;
+        }
+        return false;
+    }
+    private void markIncorrectCells() {
+        String[] puzzle = getCheckedInput(boardView);
+        String[] solvedPuzzle = currentPuzzle[1];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (!(puzzle[9 * i + j].equals("") || puzzle[9 * i + j].equals(solvedPuzzle[9 * i + j]))) {
+                    boardView.highlightAt(i, j, Color.RED);
+                    mistakeCells.add(9 * i + j);
+                }
+            }
+        }
+    }
+    private void setNewPuzzleText(String[] boardText) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (!boardText[9 * i + j].equals("")) {
+                    boardView.setFixedTextAt(i, j, boardText[9 * i + j]);
+                }
+            }
+        }
+    }
+    private void setBoardText(String[] boardText) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                boardView.setTextAt(i, j, boardText[9 * i + j]);
+            }
+        }
+    }
+    public void notifyRightClickedAt(int row, int col) {
+        Button hintButton = (Button) findViewById(R.id.HintButton);
+        if (hintButton.isEnabled() && !isSolved()) {
+            createHint(row, col);
+            updateButtons();
+        }
+    }
+    /**
+     * Updates current hint, calls updateAfterBoardCellChange() for each cell, and checks board for mistakes if doNotifyMistakes is true
+     */
+    private void updateAfterBoardChange() {
+        updateHint();
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                updateAfterBoardCellChange(i, j, false);
+            }
+        }
+        if (doNotifyMistakes) {
+            checkBoardForMistakes();
+        }
+    }
+    /**
+     * updates current hint if checkHint is true, checks for corrected mistakes, checks if puzzle is solved, and formats candidates text
+     * @param row
+     * @param col
+     */
+    private void updateAfterBoardCellChange(int row, int col, boolean checkHint) {
+        if (currentPuzzle != null) {
+            if (checkHint) {
+                updateHint();
+            }
+            String[] puzzle = getCheckedInput(boardView);
+            String[] solvedPuz = currentPuzzle[1];
+            // check if user has corrected a mistake
+            if (!mistakeCells.isEmpty()) {
+                for (int i = 0; i < mistakeCells.size(); i++) {
+                    int cell = mistakeCells.elementAt(i);
+                    if (puzzle[cell].equals("") || puzzle[cell].equals(solvedPuz[cell])) {
+                        boardView.removeHighlightingAt(cell / 9, cell % 9);
+                        mistakeCells.removeElementAt(i);
+                        i--;
+                        // reapply hint highlighting
+                        Vector<Integer> hintHighlightCells;
+                        if (currentHint != null && (hintHighlightCells = currentHint.getAffectedCells()) != null) {
+                            if (hintHighlightCells.contains(cell)) {
+                                boardView.highlightAt(cell / 9, cell % 9);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // check if puzzle is solved
+            boolean solved = true;
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    if (!puzzle[9 * i + j].equals(solvedPuz[9 * i + j])) {
+                        solved = false;
+                    }
+                }
+            }
+            if (solved) {
+                Toast.makeText(getApplicationContext(), solvedMessage, Toast.LENGTH_LONG).show();
+            }
+
+            // format candidates text appropriately
+            formatCandidatesText(row, col);
+        }
+    }
+    /**
+     * called as soon as the text of a non-candidates board cell changes if that cell currently has focus.
+     */
+    public void notifyCellChanged(int row, int col) {
+        updateAfterBoardCellChange(row, col, true);
+        if (doNotifyMistakes) {
+            checkBoardForMistakesAt(row, col);
+        }
+        if (doUpdateCands) {
+            updateCandidates();
+        }
+    }
+    /**
+     * removes current hint if it is no longer appropriate
+     */
+    private void updateHint() {
+        if (currentHint != null && currentHint.canBeApplied()) {
+            // test if hint is still appropriate
+            if (!Backend.applyHint(currentHint, getCandidates(), getCheckedInput(boardView)).getChanged()) {
+                currentHint = null;
+                boardView.removeHighlighting();
+            }
+        }
+        updateButtons();
+    }
+    private void updateButtons() {
+        Button solveButton = (Button) findViewById(R.id.SolveButton);
+        Button solvableButton = (Button) findViewById(R.id.TestSolvableButton);
+        Button hintButton = (Button) findViewById(R.id.HintButton);
+        Button applyButton = (Button) findViewById(R.id.ApplyHintButton);
+        Button undoButton = (Button) findViewById(R.id.UndoButton);
+        Button redoButton = (Button) findViewById(R.id.RedoButton);
+        if (currentPuzzle != null) {
+            //board.setCellsEditable(true);
+            solveButton.setEnabled(true);
+            solvableButton.setEnabled(true);
+            hintButton.setEnabled(true);
+            if (currentHint != null) {
+                applyButton.setEnabled(currentHint.canBeApplied());
+            }
+            else {
+                applyButton.setEnabled(false);
+            }
+        }
+        else {
+            boardView.setEditableCellsEditable(false);
+            solveButton.setEnabled(false);
+            solvableButton.setEnabled(false);
+            hintButton.setEnabled(false);
+            applyButton.setEnabled(false);
+        }
+        if (undoStack.isEmpty()) {
+            undoButton.setEnabled(false);
+            undoButton.setText("Undo");
+        }
+        else {
+            undoButton.setEnabled(true);
+            undoButton.setText("Undo " + undoStack.peek().getDescription());
+        }
+        if (redoStack.isEmpty()) {
+            redoButton.setEnabled(false);
+            redoButton.setText("Redo");
+        }
+        else {
+            redoButton.setEnabled(true);
+            redoButton.setText("Redo " + redoStack.peek().getDescription());
+        }
     }
 }
