@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 break;
         }
         generatePossiblyHard(difficulty);
+        updateButtons();
     }
 
     public void newPuzzle(View view) {
@@ -382,7 +383,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         boardView.removeHighlighting();
         currentHint = null;
         if (!checkBoardForMistakes()) {
-            Toast.makeText(getApplicationContext(), "Your entries are correct", Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(), "Your entries are correct", Toast.LENGTH_SHORT).show();
             //board.removeHighlighting(Color.RED); // red highlighting should already be removed
         }
     }
@@ -405,7 +406,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         String[] puzzle = getCheckedInput(boardView);
         String[] solvedPuzzle = currentPuzzle[1];
         if (!(puzzle[9 * row + col].equals("") || puzzle[9 * row + col].equals(solvedPuzzle[9 * row + col]))) {
-            Toast.makeText(getApplicationContext(), mistakeMessage, Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationContext(), mistakeMessage, Toast.LENGTH_LONG).show();
             boardView.highlightAt(row, col, Color.RED);
             mistakeCells.add(9 * row + col); // TODO: remove this line?
             return true;
