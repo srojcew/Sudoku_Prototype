@@ -2,7 +2,7 @@ package com.example.user.sudoku;
 
 
 /*
- * Stephen Rojcewiczp
+ * Stephen Rojcewicz
  *
  * Maintains the state of Game Mode. Used by GamePanel for Undo and Redo
  *
