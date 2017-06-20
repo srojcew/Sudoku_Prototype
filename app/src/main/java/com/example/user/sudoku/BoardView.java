@@ -14,14 +14,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class BoardView extends View {
     private int cellSize, textSize;
     private float textCenteringOffsetX, textCenteringOffsetY;
-    private Paint linesPaintThin, linesPaintThick, textPaint;
+    private Paint linesPaintThin, linesPaintThick, textPaint, fixedTextPaint;
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
-    private int selectedX, selectedY;
-    private String[][] cellContents;
+    private Cell selectedCell;
+    private Cell[][] cells;
     private static final int THIN_WIDTH = 5, THICK_WIDTH = 20;
     private static final double TEXT_SCALER = 0.8;
 
@@ -48,14 +50,16 @@ public class BoardView extends View {
         linesPaintThick.setColor(Color.BLACK);
         linesPaintThick.setStrokeWidth(THICK_WIDTH);
         textPaint = new Paint();
-        textPaint.setColor(Color.BLACK);
-        selectCell(0, 0);
-        cellContents = new String[9][9];
+        textPaint.setColor(Color.DKGRAY);
+        fixedTextPaint = new Paint();
+        fixedTextPaint.setColor(Color.BLACK);
+        cells = new Cell[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cellContents[i][j] = "";
+                cells[i][j] = new Cell("", new ArrayList<String>(), false);
             }
         }
+        selectCell(0, 0);
     }
 
     @Override
@@ -64,6 +68,7 @@ public class BoardView extends View {
         cellSize = (int) Math.floor(Math.min(this.getWidth(), this.getHeight()) / 9.0);
         textSize = (int) Math.floor(cellSize * TEXT_SCALER);
         textPaint.setTextSize(textSize);
+        fixedTextPaint.setTextSize(textSize);
         Rect textBounds = new Rect();
         textPaint.getTextBounds("0", 0, 1, textBounds);
         float width = textBounds.width() + textBounds.left;
@@ -83,7 +88,7 @@ public class BoardView extends View {
             for (int col = 0; col < 9; col++) {
                 float textX = col * cellSize + textCenteringOffsetX;
                 float textY = position + cellSize - textCenteringOffsetY;
-                canvas.drawText(cellContents[row][col].toString(), textX, textY, textPaint);
+                canvas.drawText(cells[row][col].getValue(), textX, textY, textPaint);
             }
         }
         canvas.drawLine(0, 9 * cellSize, sideLength, 9 * cellSize, linesPaintThin);
@@ -141,13 +146,58 @@ public class BoardView extends View {
     }
 
     public void setCell(String number) {
-        cellContents[selectedY][selectedX] = number;
-        invalidate();
+        setTextAt(selectedY, selectedX, number);
     }
     public int getSelectedX() {
         return selectedX;
     }
     public int getSelectedY() {
         return selectedY;
+    }
+
+
+    public String getTextAt(int row, int col) {
+        return cellContents[row][col];
+    }
+    public void setTextAt(int row, int col, String num) {
+        cellContents[row][col] = num;
+        invalidate();
+    }
+    public void setFixedTextAt(int row, int col, String num) {
+        cells[row][col].setText(num);
+        cells[row][col].setFont(cells[row][col].getFont().deriveFont(Font.BOLD));
+        cells[row][col].setEditable(false);
+        cells[row][col].setBackground(null);
+    }
+
+    private class Cell {
+        private boolean fixed;
+        private String value;
+        private ArrayList<String> candidates;
+
+        public Cell(String v, ArrayList<String> c, boolean f) {
+            value = v;
+            candidates = c;
+            fixed = f;
+        }
+
+        public boolean isFixed() {
+            return fixed;
+        }
+        public String getValue() {
+            return value;
+        }
+        public ArrayList<String> getCandidates() {
+            return candidates;
+        }
+        public void setFixed(boolean f) {
+            fixed = f;
+        }
+        public void setValue(String v) {
+            value = v;
+        }
+        public void setCandidates(ArrayList<String> c) {
+            candidates = c;
+        }
     }
 }

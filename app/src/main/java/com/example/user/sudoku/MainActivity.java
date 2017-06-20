@@ -574,4 +574,19 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             redoButton.setText("Redo " + redoStack.peek().getDescription());
         }
     }
+    /*-----------------------------------------------------------------------------------------------------------------------*/
+	/* User preferences modification handlers */
+
+    void setDoCheckCands(boolean checkC) {
+        doCheckCands = checkC;
+    }
+
+    void setDoUpdateCands(boolean updateC) {
+        doUpdateCands = updateC;
+        updateCandidates();
+    }
+
+    void setDoNotifyMistakes(boolean notMistks) {
+        doNotifyMistakes = notMistks;
+    }
 }
