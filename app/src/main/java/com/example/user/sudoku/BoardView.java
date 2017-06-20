@@ -123,6 +123,16 @@ public class BoardView extends View {
         invalidate();
     }
 
+    public String[] getAllCells() {
+        String[] allCells = new String[81];
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                allCells[row * 9 + col] = cellContents[row][col];
+            }
+        }
+        return allCells;
+    }
+
     private int getCellX(float actualX) {
         return (int) Math.floor(actualX / cellSize);
     }

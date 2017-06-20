@@ -10,6 +10,9 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Arrays;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -317,34 +320,36 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     }
 
     private void createHint(int row, int col) {
-        if (backend.findSolution(getCheckedInput(board)) == null) {
+        if (Backend.findSolution(getCheckedInput(boardView)) == null) {
             markIncorrectCells();
-            messageArea.setText("You have entered an incorrect number in the red cells");
+            Toast.makeText(getApplicationContext(), "You have entered an incorrect number in the red cells", Toast.LENGTH_LONG).show();
             return;
         }
-        if (!messageArea.getText().equals(solvedMessage)) {
-            candidatesBoard.removeHighlighting();
-            board.removeHighlighting();
+        if (!isSolved()) {
+            boardView.removeHighlighting();
             String[] candidates = getCandidates();
             HintUI hint;
             if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
-                hint = backend.hintAt(row, col, candidates, getCheckedInput(board));
+                hint = Backend.hintAt(row, col, candidates, getCheckedInput(boardView));
             }
             else {
-                hint = backend.hint(candidates, getCheckedInput(board));
+                hint = Backend.hint(candidates, getCheckedInput(boardView));
             }
             Vector<Integer> affectedCells = hint.getAffectedCells();
             if (affectedCells != null) {
                 currentHint = hint;
                 for (int i = 0; i < affectedCells.size(); i++) {
-                    candidatesBoard.highlightAt(affectedCells.elementAt(i) / 9, affectedCells.elementAt(i) % 9);
-                    board.highlightAt(affectedCells.elementAt(i) / 9, affectedCells.elementAt(i) % 9);
+                    boardView.highlightAt(affectedCells.elementAt(i) / 9, affectedCells.elementAt(i) % 9);
                 }
-                messageArea.setText("Hint: "  + hint.getMessage());
+                Toast.makeText(getApplicationContext(), "Hint: "  + hint.getMessage(), Toast.LENGTH_LONG).show();
             }
             else {
-                messageArea.setText(hint.getMessage());
+                Toast.makeText(getApplicationContext(), hint.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+    }
+    private boolean isSolved() {
+        String[] currentBoard = boardView.getAllCells();
+        return Arrays.equals(currentBoard, currentPuzzle[1]);
     }
 }
