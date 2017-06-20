@@ -293,4 +293,26 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             updateCandidates();
         }
     }
+
+    /**
+     * modifies the candidates so that they reflect the current committed numbers. Does not add to
+     * a candidate list if that list contains the correct number
+     */
+    private void updateCandidates() {
+        if (currentPuzzle != null) {
+            String[] boardArray = getCheckedInput(boardView);
+
+            String[] allCalcCandidates = Backend.findCandidates(boardArray);
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    String calcCands = allCalcCandidates[9 * i + j];
+                    boardView.setCandidatesTextAt(i, j, allCalcCandidates[9 * i + j]);
+                }
+            }
+        }
+    }
+
+    private void doHint() {
+        createHint(-1, -1);
+    }
 }
