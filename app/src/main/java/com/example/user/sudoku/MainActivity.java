@@ -315,4 +315,36 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     private void doHint() {
         createHint(-1, -1);
     }
+
+    private void createHint(int row, int col) {
+        if (backend.findSolution(getCheckedInput(board)) == null) {
+            markIncorrectCells();
+            messageArea.setText("You have entered an incorrect number in the red cells");
+            return;
+        }
+        if (!messageArea.getText().equals(solvedMessage)) {
+            candidatesBoard.removeHighlighting();
+            board.removeHighlighting();
+            String[] candidates = getCandidates();
+            HintUI hint;
+            if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
+                hint = backend.hintAt(row, col, candidates, getCheckedInput(board));
+            }
+            else {
+                hint = backend.hint(candidates, getCheckedInput(board));
+            }
+            Vector<Integer> affectedCells = hint.getAffectedCells();
+            if (affectedCells != null) {
+                currentHint = hint;
+                for (int i = 0; i < affectedCells.size(); i++) {
+                    candidatesBoard.highlightAt(affectedCells.elementAt(i) / 9, affectedCells.elementAt(i) % 9);
+                    board.highlightAt(affectedCells.elementAt(i) / 9, affectedCells.elementAt(i) % 9);
+                }
+                messageArea.setText("Hint: "  + hint.getMessage());
+            }
+            else {
+                messageArea.setText(hint.getMessage());
+            }
+        }
+    }
 }
