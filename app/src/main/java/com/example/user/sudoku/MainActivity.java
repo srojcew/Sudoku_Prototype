@@ -142,6 +142,9 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     public void redo(View view) {
         doAction(ButtonAction.REDO);
     }
+    public void hint(View view) {
+        doAction(ButtonAction.HINT);
+    }
     public void applyHint(View view) {
         doAction(ButtonAction.APPLY_HINT);
     }
