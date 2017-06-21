@@ -26,13 +26,15 @@ import com.example.user.sudoku.backend.GameStateImage;
 
 public class MainActivity extends AppCompatActivity implements NumChooserDialogFrag.NumChooserDialogFragListener, DifficultyDialogFrag.DifficultyDialogListener {
 
+    //TODO: long operations in asynchtask
+
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
     private HintUI currentHint;
     private String[][] currentPuzzle;
     private Vector<Integer> mistakeCells;
-    private static final String mistakeMessage = "You have made a mistake in the red cells.";
-    private static final String solvedMessage = "The puzzle is solved.";
+    private static final String mistakeMessage = "You have made a mistake in the red cells";
+    private static final String solvedMessage = "The puzzle is solved";
 
     private BoardView boardView;
 
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             boardView.clear(); // remove leftover bold text formatting
             boardView.removeHighlighting();
             setNewPuzzleText(puzzle[0]);
+            updateButtons();
         }
     }
 
@@ -125,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 break;
         }
         generatePossiblyHard(difficulty);
-        updateButtons();
     }
 
     public void newPuzzle(View view) {
@@ -354,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 for (int i = 0; i < affectedCells.size(); i++) {
                     boardView.highlightAt(affectedCells.elementAt(i) / 9, affectedCells.elementAt(i) % 9);
                 }
-                Toast.makeText(getApplicationContext(), "Hint: "  + hint.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), hint.getMessage(), Toast.LENGTH_LONG).show();
             }
             else {
                 Toast.makeText(getApplicationContext(), hint.getMessage(), Toast.LENGTH_LONG).show();
@@ -362,6 +364,9 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         }
     }
     private boolean isSolved() {
+        if (currentPuzzle == null) {
+            return false;
+        }
         String[] currentBoard = boardView.getAllCells();
         return Arrays.equals(currentBoard, currentPuzzle[1]);
     }
@@ -466,6 +471,9 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         if (doNotifyMistakes) {
             checkBoardForMistakes();
         }
+        if (isSolved()) {
+            Toast.makeText(getApplicationContext(), solvedMessage, Toast.LENGTH_SHORT).show();
+        }
     }
     /**
      * updates current hint if checkHint is true, checks for corrected mistakes, checks if puzzle is solved, and formats candidates text
@@ -498,19 +506,6 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 }
             }
 
-            // check if puzzle is solved
-            boolean solved = true;
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    if (!puzzle[9 * i + j].equals(solvedPuz[9 * i + j])) {
-                        solved = false;
-                    }
-                }
-            }
-            if (solved) {
-                Toast.makeText(getApplicationContext(), solvedMessage, Toast.LENGTH_SHORT).show();
-            }
-
             // format candidates text appropriately
             //formatCandidatesText(row, col);
         }
@@ -525,6 +520,9 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         }
         if (doUpdateCands) {
             updateCandidates();
+        }
+        if (isSolved()) {
+            Toast.makeText(getApplicationContext(), solvedMessage, Toast.LENGTH_SHORT).show();
         }
     }
     /**
