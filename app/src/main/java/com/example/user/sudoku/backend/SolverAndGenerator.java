@@ -1,5 +1,7 @@
 package com.example.user.sudoku.backend;
 
+import android.util.Log;
+
 import java.util.Date;
 
 import java.util.Random;
@@ -39,6 +41,26 @@ public class SolverAndGenerator {
     }
 
     public static Vector<Vector<Integer>> makePuzzle(int difficulty) {
+
+        //int[] testp = {0,4,5,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,7,TypeConstants.BLANK,TypeConstants.BLANK,1,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,7,TypeConstants.BLANK,0,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,4,8,TypeConstants.BLANK,TypeConstants.BLANK,5,TypeConstants.BLANK,4,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,0,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,5,6,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,7,TypeConstants.BLANK,0,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,1,TypeConstants.BLANK,8,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,3,TypeConstants.BLANK,2,TypeConstants.BLANK,6,TypeConstants.BLANK,TypeConstants.BLANK,0,7,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,2,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,7,5,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK};
+        /*int[] testp = {0,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,1,6,
+        6,TypeConstants.BLANK,TypeConstants.BLANK,3,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,0,TypeConstants.BLANK,
+        4,TypeConstants.BLANK,TypeConstants.BLANK,7,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,
+                TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,2,0,TypeConstants.BLANK,7,
+                TypeConstants.BLANK,8,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,4,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,
+                TypeConstants.BLANK,7,6,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,2,TypeConstants.BLANK,1,
+                TypeConstants.BLANK,TypeConstants.BLANK,2,TypeConstants.BLANK,1,TypeConstants.BLANK,TypeConstants.BLANK,6,TypeConstants.BLANK,
+                TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,8,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,TypeConstants.BLANK,
+                TypeConstants.BLANK,TypeConstants.BLANK,1,TypeConstants.BLANK,6,TypeConstants.BLANK,3,TypeConstants.BLANK,8};
+        SudokuGraph testPuzzle = new SudokuGraph(testp);
+        return testPuzzle.committedNumberes();
+
+        /*
+        boolean isEasy = HeuristicsSolvers.solveWithNakedSingles(testPuzzle.findAllCandidates(), 0);
+        boolean isMedium = (HeuristicsSolvers.solveWithHiddenSingles(testPuzzle.findAllCandidates()) && !HeuristicsSolvers.solveWithNakedSingles(testPuzzle.findAllCandidates(), 0));
+        boolean isHard = (HeuristicsSolvers.solveWithHiddenTriples(testPuzzle.findAllCandidates()) && !HeuristicsSolvers.solveWithHiddenSingles(testPuzzle.findAllCandidates()));
+        boolean isHardest = !HeuristicsSolvers.solveWithHiddenTriples(testPuzzle.findAllCandidates());*/
+
         Random rand = new Random(new Date().getTime());
         int numNodesToRemove;
         switch (difficulty) {

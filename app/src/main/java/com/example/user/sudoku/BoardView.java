@@ -262,9 +262,7 @@ public class BoardView extends View {
     public void clear() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cells[i][j].setValue("");
-                cells[i][j].setFixed(false);
-                cells[i][j].setBackHighlightColor(Color.WHITE);
+                cells[i][j].clear();
             }
         }
     }
@@ -273,7 +271,7 @@ public class BoardView extends View {
 
     private class Cell {
         private boolean fixed;
-        private String value, candidatesAsString;
+        private String value;
         private String candidates;
         private int backHighlightColor;
         private final int row, column;
@@ -285,6 +283,13 @@ public class BoardView extends View {
             candidates = c;
             fixed = f;
             backHighlightColor = b;
+        }
+
+        public void clear() {
+            value = "";
+            fixed = false;
+            candidates = "";
+            backHighlightColor = Color.WHITE;
         }
 
         public boolean isFixed() {

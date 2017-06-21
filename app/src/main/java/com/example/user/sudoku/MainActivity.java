@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
     //TODO: user defined puzzles
     //TODO: handle duplicate button presses
-    //TODO: fix incorrect difficulty
+    //TODO: fix incorrect difficulty- currently no hardest puzzles can be generated if a hardest puzzle was already generated
 
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
