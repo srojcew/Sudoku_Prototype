@@ -71,11 +71,13 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         if (number.equals("0")) {
             notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());
         }
-        else if (number.equals("10")) {
-            boardView.setCell("");
-        }
         else {
-            boardView.setCell(number);
+            if (number.equals("10")) {
+                boardView.setCell("");
+            }
+            else {
+                boardView.setCell(number);
+            }
             notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
         }
     }

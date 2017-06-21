@@ -17,9 +17,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class BoardView extends View {
+    //TODO: undo redo for every move
     private int cellSize, textSize;
     private float textCenteringOffsetX, textCenteringOffsetY;
-    private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint;
+    private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint;
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
     private Cell selectedCell;
@@ -43,6 +44,8 @@ public class BoardView extends View {
 
     private void init(Context context) {
         mainActivity = (MainActivity) context;
+        cellBackgroundPaint = new Paint();
+        cellBackgroundPaint.setColor(Color.WHITE);
         linesPaintThin = new Paint();
         linesPaintThin.setColor(Color.BLACK);
         linesPaintThin.setStrokeWidth(THIN_WIDTH);
@@ -82,15 +85,22 @@ public class BoardView extends View {
 
         for (int row = 0; row < 9; row++) {
             float position = row * cellSize;
-            Paint linesPaint = row == 3 || row == 6 ? linesPaintThick : linesPaintThin;
-            canvas.drawLine(0, position, sideLength, position, linesPaint);
-            canvas.drawLine(position, 0, position, sideLength, linesPaint);
             for (int col = 0; col < 9; col++) {
                 float textX = col * cellSize + textCenteringOffsetX;
                 float textY = position + cellSize - textCenteringOffsetY;
+                cellBackgroundPaint.setColor(cells[row][col].getBackHighlightColor());
+                canvas.drawRect(col * cellSize, position, col * cellSize + cellSize, position + cellSize, cellBackgroundPaint);
                 Paint cellValuePaint = cells[row][col].isFixed()? fixedTextPaint : editableTextPaint;
                 canvas.drawText(cells[row][col].getValue(), textX, textY, cellValuePaint);
+
             }
+
+        }
+        for (int i = 0; i < 9; i++) {
+            float position = i * cellSize;
+            Paint linesPaint = i == 3 || i == 6 ? linesPaintThick : linesPaintThin;
+            canvas.drawLine(0, position, sideLength, position, linesPaint);
+            canvas.drawLine(position, 0, position, sideLength, linesPaint);
         }
         canvas.drawLine(0, 9 * cellSize, sideLength, 9 * cellSize, linesPaintThin);
         canvas.drawLine(9 * cellSize, 0, 9 * cellSize, sideLength, linesPaintThin);
