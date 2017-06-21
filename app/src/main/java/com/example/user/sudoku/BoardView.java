@@ -18,15 +18,15 @@ import java.util.ArrayList;
 
 public class BoardView extends View {
     //TODO: undo redo for every move
-    private int cellSize, textSize;
+    private int cellSize, valueTextSize, candidatesTextSize;
     private float textCenteringOffsetX, textCenteringOffsetY;
-    private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint;
+    private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint, candidatesPaint;
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
     private Cell selectedCell;
     private Cell[][] cells;
     private static final int THIN_WIDTH = 5, THICK_WIDTH = 20;
-    private static final double TEXT_SCALER = 0.8;
+    private static final double VALUE_TEXT_SCALER = 0.8, CANDIDATES_TEXT_SCALER = 0.25;
     private boolean solved;
 
 
@@ -55,6 +55,8 @@ public class BoardView extends View {
         linesPaintThick.setStrokeWidth(THICK_WIDTH);
         editableTextPaint = new Paint();
         editableTextPaint.setColor(Color.BLUE);
+        candidatesPaint = new Paint();
+        candidatesPaint.setColor(Color.BLACK);
         fixedTextPaint = new Paint();
         fixedTextPaint.setColor(Color.BLACK);
         cells = new Cell[9][9];
@@ -68,9 +70,6 @@ public class BoardView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int desiredWidth = 100;
-        int desiredHeight = 100;
-
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -79,37 +78,11 @@ public class BoardView extends View {
         int width;
         int height;
 
-        /*
-        //Measure Width
-        if (widthMode == MeasureSpec.EXACTLY) {
-            //Must be this size
-            width = widthSize;
-        } else if (widthMode == MeasureSpec.AT_MOST) {
-            //Can't be bigger than...
-            width = Math.min(desiredWidth, widthSize);
-        } else {
-            //Be whatever you want
-            width = desiredWidth;
-        }
-        */
+
         width = widthSize;
 
-        /*
-        //Measure Height
-        if (heightMode == MeasureSpec.EXACTLY) {
-            //Must be this size
-            height = heightSize;
-        } else if (heightMode == MeasureSpec.AT_MOST) {
-            //Can't be bigger than...
-            height = Math.min(desiredHeight, heightSize);
-        } else {
-            //Be whatever you want
-            height = desiredHeight;
-        }
-        */
         height = Math.min(widthSize, heightSize);
 
-        //MUST CALL THIS
         setMeasuredDimension(width, height);
     }
 
@@ -117,9 +90,11 @@ public class BoardView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         cellSize = (int) Math.floor(Math.min(this.getWidth(), this.getHeight()) / 9.0);
-        textSize = (int) Math.floor(cellSize * TEXT_SCALER);
-        editableTextPaint.setTextSize(textSize);
-        fixedTextPaint.setTextSize(textSize);
+        valueTextSize = (int) Math.floor(cellSize * VALUE_TEXT_SCALER);
+        candidatesTextSize = (int) Math.floor(cellSize * CANDIDATES_TEXT_SCALER);
+        editableTextPaint.setTextSize(valueTextSize);
+        fixedTextPaint.setTextSize(valueTextSize);
+        candidatesPaint.setTextSize(candidatesTextSize);
         Rect textBounds = new Rect();
         editableTextPaint.getTextBounds("0", 0, 1, textBounds);
         float width = textBounds.width() + textBounds.left;
@@ -141,6 +116,18 @@ public class BoardView extends View {
                 Paint cellValuePaint = cells[row][col].isFixed()? fixedTextPaint : editableTextPaint;
                 canvas.drawText(cells[row][col].getValue(), textX, textY, cellValuePaint);
 
+                // draw candidate numbers
+                String candidates = cells[row][col].getCandidates();
+                if (cells[row][col].getValue().isEmpty() && !candidates.isEmpty()) {
+                    Rect candidatesTextBounds = new Rect();
+                    candidatesPaint.getTextBounds(candidates, 0, candidates.length(), candidatesTextBounds);
+                    float width = candidatesTextBounds.width() + candidatesTextBounds.left;
+                    float candsCenteringOffsetX = (cellSize - width) / 2;
+                    float candsCenteringOffsetY = (cellSize - candidatesTextBounds.height()) / 2;
+                    float candsTextX = col * cellSize + candsCenteringOffsetX;
+                    float candsTextY = position + cellSize - candsCenteringOffsetY;
+                    canvas.drawText(candidates, candsTextX, candsTextY, candidatesPaint);
+                }
             }
 
         }
@@ -174,14 +161,6 @@ public class BoardView extends View {
         selectedCell = cells[row][col];
     }
 
-    /*public void setAllCells(String[] cells) {
-        for (int i = 0; i < 81; i++) {
-            int row = i / 9;
-            int col = i % 9;
-            cellContents[row][col] = cells[i];
-        }
-        invalidate();
-    }*/
 
     public String[] getAllCells() {
         String[] allCells = new String[81];

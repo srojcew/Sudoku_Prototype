@@ -27,6 +27,10 @@ import com.example.user.sudoku.backend.GameStateImage;
 public class MainActivity extends AppCompatActivity implements NumChooserDialogFrag.NumChooserDialogFragListener, DifficultyDialogFrag.DifficultyDialogListener {
 
     //TODO: long operations in asynchtask
+    //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
+    //TODO: fix application of candidates removal hints
+    //TODO: user defined puzzles
+    //TODO: handle duplicate button presses
 
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
@@ -107,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             boardView.clear(); // remove leftover bold text formatting
             boardView.removeHighlighting();
             setNewPuzzleText(puzzle[0]);
+            doAutoUpdateCandidates();
             updateButtons();
         }
     }
@@ -310,12 +315,34 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     private void updateCandidates() {
         if (currentPuzzle != null) {
             String[] boardArray = getCheckedInput(boardView);
+            String[] solvedArray = currentPuzzle[1];
 
             String[] allCalcCandidates = Backend.findCandidates(boardArray);
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     String calcCands = allCalcCandidates[9 * i + j];
-                    boardView.setCandidatesTextAt(i, j, allCalcCandidates[9 * i + j]);
+                    if (calcCands.length() == 1) {
+                        boardView.setCandidatesTextAt(i, j, calcCands);
+                    }
+                    else {
+                        String userCands = new String(boardView.getCandidatesTextAt(i, j));
+
+                        // do not add candidates if the user's current candidate list contains the solution number
+                        if (userCands.contains(solvedArray[(i * 9) + j])) {
+                            String updatedCands = "";
+                            for (int n = 0; n < userCands.length(); n++) {
+                                if (calcCands.contains("" + userCands.charAt(n))) {
+                                    updatedCands += "" + userCands.charAt(n);
+                                }
+                            }
+                            boardView.setCandidatesTextAt(i, j, updatedCands);
+                        }
+                        // the user's candidate list does not contain the correct number, so use the calculated candidates
+                        else {
+                            boardView.setCandidatesTextAt(i, j, calcCands);
+                        }
+                    }
+                    // formatCandidatesText(i, j); // candidates should not need to be reformatted?
                 }
             }
         }
