@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
 
     //TODO: long operations in asynchtask
     //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
-    //TODO: fix application of candidates removal hints
     //TODO: user defined puzzles
     //TODO: handle duplicate button presses
+    //TODO: fix incorrect difficulty
 
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
