@@ -7,6 +7,15 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import android.os.Parcel;
+import android.support.test.runner.AndroidJUnit4;
+import android.util.Pair;
+import org.junit.runner.RunWith;
+import java.util.List;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+
 import static org.junit.Assert.*;
 
 /**
@@ -23,4 +32,7 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.example.user.sudoku", appContext.getPackageName());
     }
+
+
+
 }

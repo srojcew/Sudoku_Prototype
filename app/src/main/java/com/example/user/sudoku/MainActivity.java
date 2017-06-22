@@ -16,6 +16,8 @@ import android.widget.Button;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicReference;
+
 import android.graphics.Color;
 
 import com.example.user.sudoku.backend.Backend;
@@ -85,9 +87,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
         }
     }
-
-    private void generatePossiblyHard(final int difficulty) {
-        String[][] puzzle = Backend.makePuzzle(difficulty);
+    private void puzzleGenerated(String[][] puzzle, final int difficulty) {
         if (puzzle == null){
             AlertDialog.Builder continueAlertBuilder = new AlertDialog.Builder(this);
             continueAlertBuilder.setMessage(R.string.confirm_continue_generate);
@@ -114,10 +114,25 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         }
     }
 
+    private void generatePossiblyHard(final int difficulty) {
+        final AtomicReference<String[][]> puzzle = new AtomicReference<String[][]>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                puzzle.set(Backend.makePuzzle(difficulty));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        puzzleGenerated(puzzle.get(), difficulty);
+                    }
+                });
+            }
+        }).start();
+        //String[][] puzzle = Backend.makePuzzle(difficulty);
+
+    }
+
     public void difficultySelectedNowGenerate(int difficultyChoice) {
-        // user selects difficulty
-        //Object[] difficultyOptions = {"Easy", "Medium", "Hard", "Hardest", "User Defined Puzzle"};
-        //int difficultyChoice = JOptionPane.showOptionDialog(this, "Please select a level of difficulty, or select User Defined Puzzle to enter your own puzzle.", "Select difficulty", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, difficultyOptions, null);
         int difficulty = TypeConstants.EASY;
         switch (difficultyChoice) {
             case 0: difficulty = TypeConstants.EASY;
