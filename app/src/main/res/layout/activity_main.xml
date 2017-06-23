@@ -1,48 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/NewButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/new_puzzle"
-            android:onClick="newPuzzle"/>
+            android:layout_weight="1"
+            android:onClick="newPuzzle"
+            android:text="@string/new_puzzle" />
+
         <Button
             android:id="@+id/SolveButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/solve"
-            android:onClick="solve"/>
+            android:layout_weight="1"
+            android:onClick="solve"
+            android:text="@string/solve" />
+
         <Button
             android:id="@+id/HintButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/hint"
-            android:onClick="hint"/>
+            android:layout_weight="1"
+            android:onClick="hint"
+            android:text="@string/hint" />
+
         <Button
             android:id="@+id/ApplyHintButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/apply_hint"
-            android:onClick="applyHint"/>
+            android:layout_weight="1"
+            android:onClick="applyHint"
+            android:text="@string/apply_hint" />
+
         <Button
             android:id="@+id/TestSolvableButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/test_solvable"
-            android:onClick="testSolvable"/>
+            android:layout_weight="1"
+            android:onClick="testSolvable"
+            android:text="@string/test_solvable" />
 
     </LinearLayout>
 
@@ -55,21 +65,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/UndoButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/undo"
-            android:onClick="undo" />
+            android:layout_weight="1"
+            android:onClick="undo"
+            android:text="@string/undo" />
+
         <Button
             android:id="@+id/RedoButton"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/redo"
-            android:onClick="redo"/>
+            android:layout_weight="1"
+            android:onClick="redo"
+            android:text="@string/redo" />
 
     </LinearLayout>
 
 </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="invisible">
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+
+    </FrameLayout>

@@ -12,5 +12,5 @@
     <string name="apply_hint">Apply Hint</string>
     <string name="test_solvable">Test Solvable</string>
     <string name="diff_confirm_msg">You have selected difficulty level Hard. Please note that it may take a few moments to generate a Hard puzzle. Generation of a Hardest puzzle is faster.</string>
-    <string name="confirm_continue_generate">Did not find puzzle yet. Keep trying?</string>
+    <string name="generate_timeout">Puzzle not found yet. You can try again</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.user.sudoku;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import android.widget.Button;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import android.graphics.Color;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     //TODO: long operations in asynchtask
     //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
     //TODO: user defined puzzles
+    //TODO: start over button
 
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
@@ -87,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
         }
     }
-    private void puzzleGenerated(String[][] puzzle, final int difficulty) {
+    /*private void puzzleGenerated(String[][] puzzle, final int difficulty) {
         if (puzzle == null){
             AlertDialog.Builder continueAlertBuilder = new AlertDialog.Builder(this);
             continueAlertBuilder.setMessage(R.string.confirm_continue_generate);
@@ -112,10 +116,15 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             doAutoUpdateCandidates();
             updateButtons();
         }
-    }
+    }*/
 
     private void generatePossiblyHard(final int difficulty) {
-        final AtomicReference<String[][]> puzzle = new AtomicReference<String[][]>();
+
+
+
+
+
+        /*final AtomicReference<String[][]> puzzle = new AtomicReference<String[][]>();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -127,8 +136,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                     }
                 });
             }
-        }).start();
-        //String[][] puzzle = Backend.makePuzzle(difficulty);
+        }).start();*/
 
     }
 
@@ -145,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 difficulty = TypeConstants.HARDEST;
                 break;
         }
-        generatePossiblyHard(difficulty);
+        new GenerateTask().execute(difficulty);
     }
 
     public void newPuzzle(View view) {
@@ -621,6 +629,40 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             redoButton.setText("Redo " + redoStack.peek().getDescription());
         }
     }
+
+    private class GenerateTask extends AsyncTask<Integer, Void, String[][]> {
+
+        @Override
+        protected void onPreExecute() {
+            ((RelativeLayout) findViewById(R.id.progress_layout)).setVisibility(RelativeLayout.VISIBLE);
+        }
+
+        @Override
+        protected String[][] doInBackground(Integer... difficulty) {
+            if (isCancelled()) {
+                return null;
+            }
+            return Backend.makePuzzle(difficulty[0]);
+        }
+        @Override
+        protected void onPostExecute(String[][] puzzle) {
+            if (puzzle == null) {
+                Toast.makeText(getApplicationContext(), R.string.generate_timeout, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                undoStack.push(new GameStateImage(boardView, "new puzzle", currentPuzzle));
+                currentPuzzle = puzzle;
+                boardView.clear(); // remove leftover bold text formatting
+                boardView.removeHighlighting();
+                setNewPuzzleText(puzzle[0]);
+                doAutoUpdateCandidates();
+                updateButtons();
+            }
+            ((RelativeLayout) findViewById(R.id.progress_layout)).setVisibility(RelativeLayout.INVISIBLE);
+        }
+
+    }
+
     /*-----------------------------------------------------------------------------------------------------------------------*/
 	/* User preferences modification handlers */
 
