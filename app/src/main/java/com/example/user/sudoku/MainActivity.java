@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
     //TODO: user defined puzzles
     //TODO: start over button
-    //TODO: show empty grid when generation times out
+    //TODO: show toast generation times out but keep searching
+    //TODO: check current hint when candidates change
 
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
