@@ -31,11 +31,9 @@ import com.example.user.sudoku.backend.GameStateImage;
 
 public class MainActivity extends AppCompatActivity implements NumChooserDialogFrag.NumChooserDialogFragListener, DifficultyDialogFrag.DifficultyDialogListener {
 
-    //TODO: long operations in asynchtask
     //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
     //TODO: user defined puzzles
     //TODO: start over button
-    //TODO: show toast generation times out but keep searching
     //TODO: check current hint when candidates change
 
     private Stack<GameStateImage> undoStack;
@@ -155,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 difficulty = TypeConstants.HARDEST;
                 break;
         }
-        new GenerateTask().execute(difficulty);
+        new GenerateTask(difficulty).execute(difficulty);
     }
 
     public void newPuzzle(View view) {
@@ -633,6 +631,11 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
     }
 
     private class GenerateTask extends AsyncTask<Integer, Void, String[][]> {
+        private int difficultyLevel;
+        public GenerateTask(int d) {
+            super();
+            difficultyLevel = d;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -650,6 +653,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         protected void onPostExecute(String[][] puzzle) {
             if (puzzle == null) {
                 Toast.makeText(getApplicationContext(), R.string.generate_timeout, Toast.LENGTH_SHORT).show();
+                new GenerateTask(difficultyLevel).execute(difficultyLevel);
             }
             else {
                 undoStack.push(new GameStateImage(boardView, "new puzzle", currentPuzzle));
@@ -659,8 +663,8 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
                 setNewPuzzleText(puzzle[0]);
                 doAutoUpdateCandidates();
                 updateButtons();
+                ((RelativeLayout) findViewById(R.id.progress_layout)).setVisibility(RelativeLayout.INVISIBLE);
             }
-            ((RelativeLayout) findViewById(R.id.progress_layout)).setVisibility(RelativeLayout.INVISIBLE);
         }
 
     }

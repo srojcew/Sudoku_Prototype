@@ -20,7 +20,7 @@ public class BoardView extends View {
     //TODO: undo redo for every move
     private int cellSize, valueTextSize, candidatesTextSize;
     private float textCenteringOffsetX, textCenteringOffsetY;
-    private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint, candidatesPaint;
+    private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint, candidatesPaint, selectedCellPaint, numberChooserPaint;
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
     private Cell selectedCell;
@@ -28,6 +28,8 @@ public class BoardView extends View {
     private static final int THIN_WIDTH = 5, THICK_WIDTH = 20;
     private static final double VALUE_TEXT_SCALER = 0.8, CANDIDATES_TEXT_SCALER = 0.25;
     private boolean solved;
+
+    private Cell cellToSetValue = null;
 
 
     public BoardView(Context context) {
@@ -59,6 +61,10 @@ public class BoardView extends View {
         candidatesPaint.setColor(Color.BLACK);
         fixedTextPaint = new Paint();
         fixedTextPaint.setColor(Color.BLACK);
+        selectedCellPaint = new Paint();
+        selectedCellPaint.setColor(Color.LTGRAY);
+        numberChooserPaint = new Paint();
+        numberChooserPaint.setColor(Color.GREEN);
         cells = new Cell[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -100,6 +106,7 @@ public class BoardView extends View {
         float width = textBounds.width() + textBounds.left;
         textCenteringOffsetX = (cellSize - width) / 2;
         textCenteringOffsetY = (cellSize - textBounds.height()) / 2;
+        numberChooserPaint.setTextSize((float) (valueTextSize * 0.8));
     }
 
     @Override
@@ -139,6 +146,27 @@ public class BoardView extends View {
         }
         canvas.drawLine(0, 9 * cellSize, sideLength, 9 * cellSize, linesPaintThin);
         canvas.drawLine(9 * cellSize, 0, 9 * cellSize, sideLength, linesPaintThin);
+
+        // show number chooser
+        if (cellToSetValue != null) {
+            int row = cellToSetValue.getRow();
+            int col = cellToSetValue.getColumn();
+            canvas.drawRect(col * cellSize, row * cellSize, col * cellSize + cellSize, row * cellSize + cellSize, selectedCellPaint);
+            if (cellToSetValue.getValue() != "") {
+                float position = row * cellSize;
+                float textX = col * cellSize + textCenteringOffsetX;
+                float textY = position + cellSize - textCenteringOffsetY;
+                canvas.drawText(cells[row][col].getValue(), textX, textY, editableTextPaint);
+            }
+            String candidates = cells[row][col].getCandidates();
+
+            float offset = cellSize / 2;
+            for (int i = 0; i < candidates.length(); i++) {
+                float rowOffset = (-1 + i / 3) * offset  - textCenteringOffsetY;
+                float colOffset = (-1 + i % 3) * offset  + textCenteringOffsetX;
+                canvas.drawText("" + candidates.charAt(i), col * cellSize + colOffset, row * cellSize + cellSize + rowOffset, numberChooserPaint);
+            }
+        }
     }
 
     @Override
@@ -146,16 +174,28 @@ public class BoardView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
-        int row = getCellY(event.getY());
-        int col = getCellX(event.getX());
-        if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
-            if (!cells[row][col].isFixed()) {
-                selectCell(row, col);
-                mainActivity.showNumberChooser();
+
+        if (cellToSetValue == null) {
+            int row = getCellY(event.getY());
+            int col = getCellX(event.getX());
+            if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
+                if (!cells[row][col].isFixed()) {
+                    if (!cells[row][col].getCandidates().isEmpty()) {
+                        selectCell(row, col);
+                        cellToSetValue = cells[row][col];
+                        invalidate();
+                    }
+                }
             }
         }
+        else {
+            int relativeRow = -1 + 
+        }
+
+
         return true;
     }
+
 
     private void selectCell(int row, int col) {
         selectedCell = cells[row][col];
@@ -265,6 +305,7 @@ public class BoardView extends View {
                 cells[i][j].clear();
             }
         }
+        cellToSetValue = null;
     }
 
 
