@@ -78,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
         numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");
     }
 
+    public void setCellValue(View valueTextView) {
+        switch (valueTextView) {
+            case findViewById(R.id.value_textview1) :
+        }
+    }
+
     /*public void numSelected(String number) {
         if (number.equals("0")) {
             notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());

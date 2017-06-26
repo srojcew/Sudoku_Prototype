@@ -13,4 +13,14 @@
     <string name="test_solvable">Test Solvable</string>
     <string name="diff_confirm_msg">You have selected difficulty level Hard. Please note that it may take a few moments to generate a Hard puzzle. Generation of a Hardest puzzle is faster.</string>
     <string name="generate_timeout">Hard puzzles can take some time to generate</string>
+    <string name="num1">1</string>
+    <string name="num2">2</string>
+    <string name="num3">3</string>
+    <string name="num4">4</string>
+    <string name="num5">5</string>
+    <string name="num6">6</string>
+    <string name="num7">7</string>
+    <string name="num8">8</string>
+    <string name="num9">9</string>
+    <string name="blank">blank</string>
 </resources>
