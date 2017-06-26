@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class BoardView extends View {
     //TODO: undo redo for every move
+    //TODO: no "_" for empty cells
     private int cellSize, valueTextSize, candidatesTextSize;
     //private float textCenteringOffsetX, textCenteringOffsetY;
     private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint, candidatesPaint, selectedCellPaint, numberChooserPaint;
@@ -124,7 +125,7 @@ public class BoardView extends View {
                 // draw candidate numbers
                 String candidates = cells[row][col].getCandidates();
                 if (cells[row][col].getValue().isEmpty() && !candidates.isEmpty()) {
-                    drawCenteredTextInCell(candidates, row, col, cellValuePaint, canvas);
+                    drawCenteredTextInCell(candidates, row, col, candidatesPaint, canvas);
                 }
             }
 
@@ -167,7 +168,7 @@ public class BoardView extends View {
         Rect textBounds = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), textBounds);
         float width = textBounds.width() + textBounds.left;
-        return x + width / 2;
+        return x - width / 2;
     }
     private float findStartYToCenterAt(String text, float y, Paint textPaint) {
         if (text.isEmpty()) {
@@ -175,7 +176,7 @@ public class BoardView extends View {
         }
         Rect textBounds = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), textBounds);
-        return y - textBounds.height() / 2;
+        return y + textBounds.height() / 2;
     }
     private void drawCenteredTextInCell(String text, int row, int col, Paint textPaint, Canvas canvas) {
         drawCenteredText(text, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, textPaint, canvas);
@@ -207,7 +208,7 @@ public class BoardView extends View {
         else {
             String selectedValue = cellValueChoices.getValueAtPosition(event.getX(), event.getY());
             if (selectedValue != null) {
-
+                mainActivity.cellValueSet(cellValueChoices.getCell().getRow(), cellValueChoices.getCell().getColumn());
             }
             cellValueChoices = null;
         }
@@ -400,19 +401,25 @@ public class BoardView extends View {
         public CellValueChoices (Cell c) {
             cell = c;
             candidateValues = new ArrayList<CandidateValue>();
-            float arcSpacing = 360 / c.getCandidates().length();
-            float x = cell.getColumn() * cellSize + cellSize / 2;
-            float y = cell.getRow() * cellSize + cellSize / 2;
+            float centerX = cell.getColumn() * cellSize + cellSize / 2;
+            float centerY = cell.getRow() * cellSize + cellSize / 2;
 
             if (!cell.getValue().equals("")) {
-                candidateValues.add(new CandidateValue(cell.getValue(), x, y, candidatesPaint));
+                candidateValues.add(new CandidateValue(cell.getValue(), centerX, centerY, numberChooserPaint));
             }
-            candidateValues.add(new CandidateValue("", x - drawRadius, y - drawRadius, candidatesPaint));
+            candidateValues.add(new CandidateValue("", centerX - drawRadius, centerY - drawRadius, numberChooserPaint));
 
-            /*for (int i = 0; i < c.getCandidates().length(); i++) {
-                candidateValues.add(new CandidateValue(c.getCandidates().charAt(i) + "", ));
-            }*/
-
+            //draw the candidate values in a circle around the cell
+            double arcSpacing = Math.PI / c.getCandidates().length();
+            double angle = 0;
+            for (int i = 0; i < c.getCandidates().length(); i++) {
+                if (!(c.getCandidates().charAt(i) + "").equals(cell.getValue())) {
+                    double x = centerX + drawRadius * Math.cos(angle);
+                    double y = centerY + drawRadius * Math.sin(angle);
+                    candidateValues.add(new CandidateValue(c.getCandidates().charAt(i) + "", (float) x, (float) y, numberChooserPaint));
+                    angle += arcSpacing;
+                }
+            }
         }
 
         public Cell getCell() {
@@ -433,7 +440,7 @@ public class BoardView extends View {
             return new Rect((int) (x - width / 2), (int) (y - height / 2), (int) (x + width / 2), (int) (y + height / 2));
         }
 
-        private void drawChoices(Canvas canvas) {
+        public void drawChoices(Canvas canvas) {
             /*String currentValue = cell.getValue();
             if (!currentValue.equals("")) {
                 drawCenteredTextInCell(currentValue, cell.getRow(), cell.getColumn(), editableTextPaint, canvas);
@@ -444,7 +451,7 @@ public class BoardView extends View {
         }
 
         private class CandidateValue {
-            private String value;
+            private String value, textToDraw;
             private Rect boundingBox;
             private float centeredX, centeredY;
             private Paint textPaint;
@@ -454,13 +461,13 @@ public class BoardView extends View {
                 this.centeredY = centeredY;
                 this.textPaint = textPaint;
                 value = v;
+                textToDraw = v.equals("") ? "X" : v;
                 Rect stringSizeRect = new Rect();
                 textPaint.getTextBounds(v, 0, v.length(), stringSizeRect);
                 boundingBox = createRectCenteredAt(centeredX, centeredY, stringSizeRect.width(), stringSizeRect.height());
             }
 
             public void draw(Canvas canvas) {
-                String textToDraw = value.equals("") ? "_" : value;
                 drawCenteredText(textToDraw, centeredX, centeredY, textPaint, canvas);
             }
         }
