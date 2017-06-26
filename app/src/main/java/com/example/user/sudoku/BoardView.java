@@ -29,7 +29,7 @@ public class BoardView extends View {
     private static final double VALUE_TEXT_SCALER = 0.8, CANDIDATES_TEXT_SCALER = 0.25;
     private boolean solved;
 
-    private Cell cellToSetValue = null;
+    private CellValueChoices cellValueChoices = null;
 
 
     public BoardView(Context context) {
@@ -139,15 +139,15 @@ public class BoardView extends View {
         canvas.drawLine(9 * cellSize, 0, 9 * cellSize, sideLength, linesPaintThin);
 
         // show number chooser
-        if (cellToSetValue != null) {
-            int row = cellToSetValue.getRow();
-            int col = cellToSetValue.getColumn();
+        if (cellValueChoices != null) {
+            int row = cellValueChoices.getCell().getRow();
+            int col = cellValueChoices.getCell().getColumn();
+
+            //highlight cell
             canvas.drawRect(col * cellSize, row * cellSize, col * cellSize + cellSize, row * cellSize + cellSize, selectedCellPaint);
-            String currentValue = cellToSetValue.getValue();
-            if (!currentValue.equals("")) {
-                drawCenteredTextInCell(currentValue, row, col, editableTextPaint, canvas);
-            }
-            String candidates = cells[row][col].getCandidates();
+            cellValueChoices.drawChoices(canvas);
+
+            /*String candidates = cells[row][col].getCandidates();
 
             float offset = cellSize / 2;
             for (int i = 0; i < candidates.length(); i++) {
@@ -156,7 +156,7 @@ public class BoardView extends View {
                     float colOffset = (-1 + i % 3) * offset  + textCenteringOffsetX;
                     canvas.drawText("" + candidates.charAt(i), col * cellSize + colOffset, row * cellSize + cellSize + rowOffset, numberChooserPaint);
                 }
-            }
+            }*/
         }
     }
 
@@ -192,24 +192,26 @@ public class BoardView extends View {
             return super.onTouchEvent(event);
         }
 
-        if (cellToSetValue == null) {
+        if (cellValueChoices == null) {
             int row = getCellY(event.getY());
             int col = getCellX(event.getX());
             if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
                 if (!cells[row][col].isFixed()) {
                     if (!cells[row][col].getCandidates().isEmpty()) {
                         selectCell(row, col);
-                        cellToSetValue = cells[row][col];
-                        invalidate();
+                        cellValueChoices = new CellValueChoices(cells[row][col]);
                     }
                 }
             }
         }
         else {
+            String selectedValue = cellValueChoices.getValueAtPosition(event.getX(), event.getY());
+            if (selectedValue != null) {
 
+            }
+            cellValueChoices = null;
         }
-
-
+        invalidate();
         return true;
     }
 
@@ -322,7 +324,7 @@ public class BoardView extends View {
                 cells[i][j].clear();
             }
         }
-        cellToSetValue = null;
+        cellValueChoices = null;
     }
 
 
@@ -390,16 +392,27 @@ public class BoardView extends View {
         }
     }
 
-    private class CellValueChooser {
+    private class CellValueChoices {
         private final Cell cell;
         private ArrayList<CandidateValue> candidateValues;
+        private final float drawRadius = cellSize / 2;
 
-        public CellValueChooser (Cell c) {
+        public CellValueChoices (Cell c) {
             cell = c;
             candidateValues = new ArrayList<CandidateValue>();
-            for (int i = 0; i < c.getCandidates().length(); i++) {
-                candidateValues.add(new CandidateValue(c.getCandidates().charAt(i) + "", ));
+            float arcSpacing = 360 / c.getCandidates().length();
+            float x = cell.getColumn() * cellSize + cellSize / 2;
+            float y = cell.getRow() * cellSize + cellSize / 2;
+
+            if (!cell.getValue().equals("")) {
+                candidateValues.add(new CandidateValue(cell.getValue(), x, y, candidatesPaint));
             }
+            candidateValues.add(new CandidateValue("", x - drawRadius, y - drawRadius, candidatesPaint));
+
+            /*for (int i = 0; i < c.getCandidates().length(); i++) {
+                candidateValues.add(new CandidateValue(c.getCandidates().charAt(i) + "", ));
+            }*/
+
         }
 
         public Cell getCell() {
@@ -413,23 +426,43 @@ public class BoardView extends View {
                     return candidateValue.value;
                 }
             }
-            return candidateValues.get(0).value;
+            return null;
+        }
+
+        private Rect createRectCenteredAt(float x, float y, float width, float height) {
+            return new Rect((int) (x - width / 2), (int) (y - height / 2), (int) (x + width / 2), (int) (y + height / 2));
+        }
+
+        private void drawChoices(Canvas canvas) {
+            /*String currentValue = cell.getValue();
+            if (!currentValue.equals("")) {
+                drawCenteredTextInCell(currentValue, cell.getRow(), cell.getColumn(), editableTextPaint, canvas);
+            }*/
+            for (CandidateValue candidateValue : candidateValues) {
+                candidateValue.draw(canvas);
+            }
         }
 
         private class CandidateValue {
             private String value;
             private Rect boundingBox;
+            private float centeredX, centeredY;
+            private Paint textPaint;
 
             public CandidateValue(String v, float centeredX, float centeredY, Paint textPaint) {
+                this.centeredX = centeredX;
+                this.centeredY = centeredY;
+                this.textPaint = textPaint;
                 value = v;
                 Rect stringSizeRect = new Rect();
                 textPaint.getTextBounds(v, 0, v.length(), stringSizeRect);
                 boundingBox = createRectCenteredAt(centeredX, centeredY, stringSizeRect.width(), stringSizeRect.height());
             }
-        }
 
-        private Rect createRectCenteredAt(float x, float y, float width, float height) {
-            return new Rect((int) (x - width / 2), (int) (y - height / 2), (int) (x + width / 2), (int) (y + height / 2));
+            public void draw(Canvas canvas) {
+                String textToDraw = value.equals("") ? "_" : value;
+                drawCenteredText(textToDraw, centeredX, centeredY, textPaint, canvas);
+            }
         }
     }
 }

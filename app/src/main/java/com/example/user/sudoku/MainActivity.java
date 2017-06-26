@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
         numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");
     }
 
-    public void numSelected(String number) {
+    /*public void numSelected(String number) {
         if (number.equals("0")) {
             notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());
         }
@@ -90,7 +90,11 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             }
             notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
         }
+    }*/
+    public void cellValueSet(String value, int row, int col) {
+        if (value.equals(""))
     }
+
     /*private void puzzleGenerated(String[][] puzzle, final int difficulty) {
         if (puzzle == null){
             AlertDialog.Builder continueAlertBuilder = new AlertDialog.Builder(this);
