@@ -145,10 +145,7 @@ public class BoardView extends View {
             canvas.drawRect(col * cellSize, row * cellSize, col * cellSize + cellSize, row * cellSize + cellSize, selectedCellPaint);
             String currentValue = cellToSetValue.getValue();
             if (!currentValue.equals("")) {
-                float position = row * cellSize;
-                float textX = col * cellSize + textCenteringOffsetX;
-                float textY = position + cellSize - textCenteringOffsetY;
-                canvas.drawText(cells[row][col].getValue(), textX, textY, editableTextPaint);
+                drawCenteredTextInCell(currentValue, row, col, editableTextPaint, canvas);
             }
             String candidates = cells[row][col].getCandidates();
 
@@ -395,11 +392,14 @@ public class BoardView extends View {
 
     private class CellValueChooser {
         private final Cell cell;
-        private final String candidates;
+        private ArrayList<CandidateValue> candidateValues;
 
         public CellValueChooser (Cell c) {
             cell = c;
-            candidates = c.getCandidates();
+            candidateValues = new ArrayList<CandidateValue>();
+            for (int i = 0; i < c.getCandidates().length(); i++) {
+                candidateValues.add(new CandidateValue(c.getCandidates().charAt(i) + "", ));
+            }
         }
 
         public Cell getCell() {
@@ -407,7 +407,29 @@ public class BoardView extends View {
         }
 
         public String getValueAtPosition(float x, float y) {
-            
+            for (CandidateValue candidateValue : candidateValues) {
+                Rect boundingBox = candidateValue.boundingBox;
+                if (boundingBox.contains((int) x, (int) y)) {
+                    return candidateValue.value;
+                }
+            }
+            return candidateValues.get(0).value;
+        }
+
+        private class CandidateValue {
+            private String value;
+            private Rect boundingBox;
+
+            public CandidateValue(String v, float centeredX, float centeredY, Paint textPaint) {
+                value = v;
+                Rect stringSizeRect = new Rect();
+                textPaint.getTextBounds(v, 0, v.length(), stringSizeRect);
+                boundingBox = createRectCenteredAt(centeredX, centeredY, stringSizeRect.width(), stringSizeRect.height());
+            }
+        }
+
+        private Rect createRectCenteredAt(float x, float y, float width, float height) {
+            return new Rect((int) (x - width / 2), (int) (y - height / 2), (int) (x + width / 2), (int) (y + height / 2));
         }
     }
 }
