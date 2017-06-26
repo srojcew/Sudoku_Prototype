@@ -24,7 +24,7 @@ public class BoardView extends View {
     private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint, candidatesPaint, selectedCellPaint, numberChooserPaint;
     private MainActivity mainActivity;
     private static final String TAG = "BoardView";
-    //private Cell selectedCell;
+    private Cell selectedCell;
     private Cell[][] cells;
     private static final int THIN_WIDTH = 5, THICK_WIDTH = 20;
     private static final double VALUE_TEXT_SCALER = 0.8, CANDIDATES_TEXT_SCALER = 0.25, CHOOSER_TEXT_SCALER = 1.2;
@@ -192,6 +192,18 @@ public class BoardView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
+        if (selectedCell == null) {
+            int row = getCellY(event.getY());
+            int col = getCellX(event.getX());
+            if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
+                if (!cells[row][col].isFixed()) {
+                    selectCell(row, col);
+                    mainActivity.showNumberChooser();
+                }
+            }
+        }
+
+
 
         /*if (cellValueChoices == null) {
             int row = getCellY(event.getY());
@@ -222,9 +234,9 @@ public class BoardView extends View {
     }
 
 
-    /*private void selectCell(int row, int col) {
+    private void selectCell(int row, int col) {
         selectedCell = cells[row][col];
-    }*/
+    }
 
 
     public String[] getAllCells() {
@@ -244,7 +256,7 @@ public class BoardView extends View {
         return (int) Math.floor(actualY / cellSize);
     }
 
-    /*public void setCell(String number) {
+    public void setCell(String number) {
         selectedCell.setValue(number);
     }
     public int getSelectedX() {
@@ -252,7 +264,7 @@ public class BoardView extends View {
     }
     public int getSelectedY() {
         return selectedCell.getRow();
-    }*/
+    }
 
 
     public String getTextAt(int row, int col) {
@@ -330,6 +342,7 @@ public class BoardView extends View {
                 cells[i][j].clear();
             }
         }
+        selectedCell = null;
         //cellValueChoices = null;
     }
 

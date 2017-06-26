@@ -74,14 +74,21 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
     }
 
     protected void showNumberChooser() {
-        NumChooserDialogFrag numChooser = new NumChooserDialogFrag();
-        numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");
+        /*NumChooserDialogFrag numChooser = new NumChooserDialogFrag();
+        numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");*/
+        findViewById(R.id.value_selector_view).setVisibility(View.VISIBLE);
     }
 
     public void setCellValue(View valueTextView) {
-        switch (valueTextView) {
-            case findViewById(R.id.value_textview1) :
+        findViewById(R.id.value_selector_view).setVisibility(View.INVISIBLE);
+        String value = ((TextView) (valueTextView)).getText() + "";
+        if (value.equals(getResources().getString(R.string.blank))) {
+            boardView.setCell("");
         }
+        else {
+            boardView.setCell(value);
+        }
+        notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
     }
 
     /*public void numSelected(String number) {

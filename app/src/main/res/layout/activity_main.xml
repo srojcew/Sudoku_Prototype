@@ -57,85 +57,7 @@
     </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/value_selector_view"
-            android:visibility="invisible">
 
-            <TextView
-                android:id="@+id/value_textview1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/num1"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/num2"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview3"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/num3"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview4"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/num4"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview5"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/num5"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview6"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/num6"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview7"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/num7"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview8"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/num8"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview9"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/num9"
-                android:onClick="setCellValue"/>
-            <TextView
-                android:id="@+id/value_textview_blank"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/blank"
-                android:onClick="setCellValue"/>
-
-
-        </LinearLayout>
 
 
 
@@ -143,6 +65,86 @@
         android:id="@+id/BoardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/value_selector_view"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/value_textview1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/num1"
+            android:onClick="setCellValue" />
+        <TextView
+            android:id="@+id/value_textview2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/num2"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview3"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/num3"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview4"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/num4"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview5"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/num5"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview6"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/num6"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview7"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/num7"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview8"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/num8"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview9"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/num9"
+            android:onClick="setCellValue"/>
+        <TextView
+            android:id="@+id/value_textview_blank"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/blank"
+            android:onClick="setCellValue"/>
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
