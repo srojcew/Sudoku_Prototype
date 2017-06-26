@@ -29,12 +29,13 @@ import com.example.user.sudoku.backend.HintUI;
 import com.example.user.sudoku.backend.HintResponse;
 import com.example.user.sudoku.backend.GameStateImage;
 
-public class MainActivity extends AppCompatActivity implements NumChooserDialogFrag.NumChooserDialogFragListener, DifficultyDialogFrag.DifficultyDialogListener {
+public class MainActivity extends AppCompatActivity implements DifficultyDialogFrag.DifficultyDialogListener {
 
     //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
     //TODO: user defined puzzles
     //TODO: start over button
     //TODO: check current hint when candidates change
+    //TODO: cell hints
 
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
@@ -91,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements NumChooserDialogF
             notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
         }
     }*/
-    public void cellValueSet(String value, int row, int col) {
-        if (value.equals(""))
+    public void cellValueSet(int row, int col) {
+       notifyCellChanged(row, col);
     }
 
     /*private void puzzleGenerated(String[][] puzzle, final int difficulty) {
