@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
     //TODO: user defined puzzles
     //TODO: start over button
     //TODO: check current hint when candidates change
-    //TODO: cell hints
     //TODO: fix non-centered numbers
 
     private Stack<GameStateImage> undoStack;

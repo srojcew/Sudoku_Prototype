@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 public class BoardView extends View {
     //TODO: undo redo for every move
-    //TODO: no "_" for empty cells
     private int cellSize, valueTextSize, candidatesTextSize;
     //private float textCenteringOffsetX, textCenteringOffsetY;
     private Paint linesPaintThin, linesPaintThick, editableTextPaint, fixedTextPaint, cellBackgroundPaint, candidatesPaint, selectedCellPaint, numberChooserPaint;
