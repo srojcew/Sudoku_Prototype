@@ -37,10 +37,12 @@ public class BoardView extends View {
         super(context);
         init(context);
     }
+
     public BoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         init(context);
     }
+
     public BoardView(Context context, AttributeSet attributeSet, int defStyle) {
         super(context, attributeSet, defStyle);
         init(context);
@@ -119,7 +121,7 @@ public class BoardView extends View {
             for (int col = 0; col < 9; col++) {
                 cellBackgroundPaint.setColor(cells[row][col].getBackHighlightColor());
                 canvas.drawRect(col * cellSize, position, col * cellSize + cellSize, position + cellSize, cellBackgroundPaint);
-                Paint cellValuePaint = cells[row][col].isFixed()? fixedTextPaint : editableTextPaint;
+                Paint cellValuePaint = cells[row][col].isFixed() ? fixedTextPaint : editableTextPaint;
                 drawCenteredTextInCell(cells[row][col].getValue(), row, col, cellValuePaint, canvas);
 
                 // draw candidate numbers
@@ -165,11 +167,15 @@ public class BoardView extends View {
         if (text.isEmpty()) {
             return x;
         }
+        if (text.equals("1")) {
+            text = "0";
+        }
         Rect textBounds = new Rect();
         textPaint.getTextBounds(text, 0, text.length(), textBounds);
         float width = textBounds.width() + textBounds.left;
         return x - width / 2;
     }
+
     private float findStartYToCenterAt(String text, float y, Paint textPaint) {
         if (text.isEmpty()) {
             return y;
@@ -178,9 +184,11 @@ public class BoardView extends View {
         textPaint.getTextBounds(text, 0, text.length(), textBounds);
         return y + textBounds.height() / 2;
     }
+
     private void drawCenteredTextInCell(String text, int row, int col, Paint textPaint, Canvas canvas) {
         drawCenteredText(text, col * cellSize + cellSize / 2, row * cellSize + cellSize / 2, textPaint, canvas);
     }
+
     private void drawCenteredText(String text, float x, float y, Paint textPaint, Canvas canvas) {
         float startX = findStartXToCenterAt(text, x, textPaint);
         float startY = findStartYToCenterAt(text, y, textPaint);
@@ -192,16 +200,14 @@ public class BoardView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
-        //if (selectedCell == null) {
-            int row = getCellY(event.getY());
-            int col = getCellX(event.getX());
-            if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
-                if (!cells[row][col].isFixed()) {
-                    selectCell(row, col);
-                    mainActivity.showNumberChooser();
-                }
+        int row = getCellY(event.getY());
+        int col = getCellX(event.getX());
+        if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
+            if (!cells[row][col].isFixed()) {
+                selectCell(row, col);
+                mainActivity.showNumberChooser();
             }
-        //}
+        }
 
 
 
@@ -236,7 +242,9 @@ public class BoardView extends View {
 
     private void selectCell(int row, int col) {
         selectedCell = cells[row][col];
+        selectedCell.setBackHighlightColor(Color.LTGRAY);
     }
+
     private void deselectCell() {
         if (selectedCell != null) {
             selectedCell.clearHighlighting();
@@ -258,6 +266,7 @@ public class BoardView extends View {
     private int getCellX(float actualX) {
         return (int) Math.floor(actualX / cellSize);
     }
+
     private int getCellY(float actualY) {
         return (int) Math.floor(actualY / cellSize);
     }
@@ -265,9 +274,11 @@ public class BoardView extends View {
     public void setCell(String number) {
         selectedCell.setValue(number);
     }
+
     public int getSelectedX() {
         return selectedCell.getColumn();
     }
+
     public int getSelectedY() {
         return selectedCell.getRow();
     }
@@ -276,34 +287,44 @@ public class BoardView extends View {
     public String getTextAt(int row, int col) {
         return cells[row][col].getValue();
     }
+
     public String getCandidatesTextAt(int row, int col) {
         return cells[row][col].getCandidates();
     }
+
     public void setCandidatesTextAt(int row, int col, String candidates) {
         cells[row][col].setCandidates(candidates);
     }
+
     public void setFixedCandidatesTextAt(int row, int col, String candidates) {
         setCandidatesTextAt(row, col, candidates);
     }
+
     public boolean candidatesTextIsFixedAt(int row, int col) {
         return false;
     }
+
     public void setTextAt(int row, int col, String num) {
         cells[row][col].setValue(num);
     }
+
     public void setFixedTextAt(int row, int col, String num) {
         cells[row][col].setFixed(true);
         cells[row][col].setValue(num);
     }
+
     public boolean textIsFixedAt(int row, int col) {
         return cells[row][col].isFixed();
     }
+
     public void highlightAt(int row, int col) {
         cells[row][col].setBackHighlightColor(R.color.lightHighlight);
     }
+
     public void highlightAt(int row, int col, int color) {
         cells[row][col].setBackHighlightColor(color);
     }
+
     public void setEditableCellsEditable(boolean editable) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -313,6 +334,7 @@ public class BoardView extends View {
             }
         }
     }
+
     public void setAllCellsEditable(boolean editable) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -320,9 +342,11 @@ public class BoardView extends View {
             }
         }
     }
+
     public void setEditableAt(int row, int col, boolean editable) {
         cells[row][col].setFixed(!editable);
     }
+
     public void removeHighlighting() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -330,9 +354,11 @@ public class BoardView extends View {
             }
         }
     }
+
     public void removeHighlightingAt(int row, int col) {
         cells[row][col].clearHighlighting();
     }
+
     public void removeHighlighting(int color) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -342,6 +368,7 @@ public class BoardView extends View {
             }
         }
     }
+
     public void clear() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -350,7 +377,6 @@ public class BoardView extends View {
         }
         deselectCell();
     }
-
 
 
     private class Cell {
@@ -379,9 +405,11 @@ public class BoardView extends View {
         public boolean isFixed() {
             return fixed;
         }
+
         public String getValue() {
             return value;
         }
+
         public String getCandidates() {
             return candidates;
         }
@@ -402,18 +430,22 @@ public class BoardView extends View {
             backHighlightColor = b;
             invalidate();
         }
+
         public void clearHighlighting() {
             backHighlightColor = Color.WHITE;
             //invalidate();
         }
+
         public void setFixed(boolean f) {
             fixed = f;
             invalidate();
         }
+
         public void setValue(String v) {
             value = v;
             invalidate();
         }
+
         public void setCandidates(String c) {
             candidates = c;
             invalidate();
