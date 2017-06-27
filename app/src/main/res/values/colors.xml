@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="lightHighlight">#DEDEFF</color>
     <color name="blue">#0000FF</color>
+    <color name="blue_tint">#0022B8</color>
 </resources>

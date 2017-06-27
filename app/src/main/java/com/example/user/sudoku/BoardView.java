@@ -69,7 +69,7 @@ public class BoardView extends View {
         cells = new Cell[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cells[i][j] = new Cell(i, j, "", "", true, Color.WHITE);
+                cells[i][j] = new Cell(i, j, "", "", true);
             }
         }
         //selectCell(0, 0);
@@ -237,6 +237,12 @@ public class BoardView extends View {
     private void selectCell(int row, int col) {
         selectedCell = cells[row][col];
     }
+    private void deselectCell() {
+        if (selectedCell != null) {
+            selectedCell.clearHighlighting();
+            selectedCell = null;
+        }
+    }
 
 
     public String[] getAllCells() {
@@ -320,18 +326,18 @@ public class BoardView extends View {
     public void removeHighlighting() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                cells[i][j].setBackHighlightColor(Color.WHITE);
+                cells[i][j].clearHighlighting();
             }
         }
     }
     public void removeHighlightingAt(int row, int col) {
-        cells[row][col].setBackHighlightColor(Color.WHITE);
+        cells[row][col].clearHighlighting();
     }
     public void removeHighlighting(int color) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (cells[i][j].getBackHighlightColor() == color) {
-                    cells[i][j].setBackHighlightColor(Color.WHITE);
+                    cells[i][j].clearHighlighting();
                 }
             }
         }
@@ -342,8 +348,7 @@ public class BoardView extends View {
                 cells[i][j].clear();
             }
         }
-        selectedCell = null;
-        //cellValueChoices = null;
+        deselectCell();
     }
 
 
@@ -355,20 +360,20 @@ public class BoardView extends View {
         private int backHighlightColor;
         private final int row, column;
 
-        public Cell(int r, int col, String v, String c, boolean f, int b) {
+        public Cell(int r, int col, String v, String c, boolean f) {
             row = r;
             column = col;
             value = v;
             candidates = c;
             fixed = f;
-            backHighlightColor = b;
+            backHighlightColor = Color.WHITE;
         }
 
         public void clear() {
             value = "";
             fixed = false;
             candidates = "";
-            backHighlightColor = Color.WHITE;
+            clearHighlighting();
         }
 
         public boolean isFixed() {
@@ -396,6 +401,10 @@ public class BoardView extends View {
         public void setBackHighlightColor(int b) {
             backHighlightColor = b;
             invalidate();
+        }
+        public void clearHighlighting() {
+            backHighlightColor = Color.WHITE;
+            //invalidate();
         }
         public void setFixed(boolean f) {
             fixed = f;

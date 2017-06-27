@@ -2,10 +2,12 @@ package com.example.user.sudoku;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
     private boolean doCheckCands;
     private boolean doUpdateCands;
     private boolean doNotifyMistakes;
+    private AlertDialog numberChooserDialog = null;
 
 
     @Override
@@ -74,9 +77,26 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
     }
 
     protected void showNumberChooser() {
-        NumChooserDialogFrag numChooser = new NumChooserDialogFrag();
-        numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");
+        /*NumChooserDialogFrag numChooser = new NumChooserDialogFrag();
+        numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");*/
         //findViewById(R.id.value_selector_view).setVisibility(View.VISIBLE);
+
+
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.num_chooser_view, null));
+
+        numberChooserDialog = builder.create();
+        numberChooserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        numberChooserDialog.show();
+
+    }
+    public void testClick(View v) {
+        numberChooserDialog.dismiss();
+        numSelected("1");
     }
 
     /*public void setCellValue(View valueTextView) {
@@ -90,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
         }
         notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
     }*/
+
 
     public void numSelected(String number) {
         if (number.equals("0")) {
