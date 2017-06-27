@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
     //TODO: start over button
     //TODO: check current hint when candidates change
     //TODO: cell hints
+    //TODO: fix non-centered numbers
 
     private Stack<GameStateImage> undoStack;
     private Stack<GameStateImage> redoStack;
@@ -94,9 +95,41 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
         numberChooserDialog.show();
 
     }
-    public void testClick(View v) {
+    public void numberChooserClicked(View selectedNumberButton) {
         numberChooserDialog.dismiss();
-        numSelected("1");
+        if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num1_button)) {
+            numSelected("1");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num2_button)) {
+            numSelected("2");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num3_button)) {
+            numSelected("3");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num4_button)) {
+            numSelected("4");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num5_button)) {
+            numSelected("5");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num6_button)) {
+            numSelected("6");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num7_button)) {
+            numSelected("7");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num8_button)) {
+            numSelected("8");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.num9_button)) {
+            numSelected("9");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.blank_button)) {
+            numSelected("");
+        }
+        else if (selectedNumberButton == numberChooserDialog.findViewById(R.id.cell_hint_button)) {
+            notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());
+        }
     }
 
     /*public void setCellValue(View valueTextView) {
@@ -113,7 +146,9 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
 
 
     public void numSelected(String number) {
-        if (number.equals("0")) {
+        boardView.setCell(number);
+        notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
+        /*if (number.equals("0")) {
             notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());
         }
         else {
@@ -124,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
                 boardView.setCell(number);
             }
             notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
-        }
+        }*/
     }
     /*public void cellValueSet(int row, int col) {
        notifyCellChanged(row, col);

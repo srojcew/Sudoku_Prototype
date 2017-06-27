@@ -12,15 +12,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/num1"
-            android:onClick="testClick"/>
+            android:onClick="numberChooserClicked"/>
         <Button
+            android:id="@+id/num2_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num2"/>
+            android:text="@string/num2"
+            android:onClick="numberChooserClicked"/>
         <Button
+            android:id="@+id/num3_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num3"/>
+            android:text="@string/num3"
+            android:onClick="numberChooserClicked"/>
     </LinearLayout>
 
     <LinearLayout
@@ -28,17 +32,23 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:id="@+id/num4_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num4"/>
+            android:text="@string/num4"
+            android:onClick="numberChooserClicked"/>
         <Button
+            android:id="@+id/num5_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num5"/>
+            android:text="@string/num5"
+            android:onClick="numberChooserClicked"/>
         <Button
+            android:id="@+id/num6_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num6"/>
+            android:text="@string/num6"
+            android:onClick="numberChooserClicked"/>
     </LinearLayout>
 
     <LinearLayout
@@ -46,22 +56,42 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:id="@+id/num7_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num7"/>
+            android:text="@string/num7"
+            android:onClick="numberChooserClicked"/>
         <Button
+            android:id="@+id/num8_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num8"/>
+            android:text="@string/num8"
+            android:onClick="numberChooserClicked"/>
         <Button
+            android:id="@+id/num9_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/num9"/>
+            android:text="@string/num9"
+            android:onClick="numberChooserClicked"/>
     </LinearLayout>
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/blank"/>
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/blank_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/blank"
+            android:onClick="numberChooserClicked" />
+        <Button
+            android:id="@+id/cell_hint_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hint"
+            android:onClick="numberChooserClicked"/>
+
+    </LinearLayout>
+
 
 
 
