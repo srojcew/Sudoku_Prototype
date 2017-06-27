@@ -192,7 +192,7 @@ public class BoardView extends View {
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             return super.onTouchEvent(event);
         }
-        if (selectedCell == null) {
+        //if (selectedCell == null) {
             int row = getCellY(event.getY());
             int col = getCellX(event.getX());
             if (row >= 0 && row <= 8 && col >= 0 && col <= 8) {
@@ -201,7 +201,7 @@ public class BoardView extends View {
                     mainActivity.showNumberChooser();
                 }
             }
-        }
+        //}
 
 
 
