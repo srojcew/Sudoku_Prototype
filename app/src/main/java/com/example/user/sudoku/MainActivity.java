@@ -29,7 +29,7 @@ import com.example.user.sudoku.backend.HintUI;
 import com.example.user.sudoku.backend.HintResponse;
 import com.example.user.sudoku.backend.GameStateImage;
 
-public class MainActivity extends AppCompatActivity implements DifficultyDialogFrag.DifficultyDialogListener {
+public class MainActivity extends AppCompatActivity implements DifficultyDialogFrag.DifficultyDialogListener, NumChooserDialogFrag.NumChooserDialogFragListener {
 
     //TODO: auto-apply candidates removal hints while allowing the user to see the original candidates
     //TODO: user defined puzzles
@@ -74,12 +74,12 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
     }
 
     protected void showNumberChooser() {
-        /*NumChooserDialogFrag numChooser = new NumChooserDialogFrag();
-        numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");*/
-        findViewById(R.id.value_selector_view).setVisibility(View.VISIBLE);
+        NumChooserDialogFrag numChooser = new NumChooserDialogFrag();
+        numChooser.show(getSupportFragmentManager(), "NumChooserDialogFrag");
+        //findViewById(R.id.value_selector_view).setVisibility(View.VISIBLE);
     }
 
-    public void setCellValue(View valueTextView) {
+    /*public void setCellValue(View valueTextView) {
         findViewById(R.id.value_selector_view).setVisibility(View.INVISIBLE);
         String value = ((TextView) (valueTextView)).getText() + "";
         if (value.equals(getResources().getString(R.string.blank))) {
@@ -89,9 +89,9 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
             boardView.setCell(value);
         }
         notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
-    }
+    }*/
 
-    /*public void numSelected(String number) {
+    public void numSelected(String number) {
         if (number.equals("0")) {
             notifyRightClickedAt(boardView.getSelectedY(), boardView.getSelectedX());
         }
@@ -104,10 +104,10 @@ public class MainActivity extends AppCompatActivity implements DifficultyDialogF
             }
             notifyCellChanged(boardView.getSelectedY(), boardView.getSelectedX());
         }
-    }*/
-    public void cellValueSet(int row, int col) {
-       notifyCellChanged(row, col);
     }
+    /*public void cellValueSet(int row, int col) {
+       notifyCellChanged(row, col);
+    }*/
 
     /*private void puzzleGenerated(String[][] puzzle, final int difficulty) {
         if (puzzle == null){
